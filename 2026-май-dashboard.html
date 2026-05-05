@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Май 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: #e2ddd8;
+    --accent: #7c3aed;
+    --accent2: #0891b2;
+    --accent3: #d97706;
+    --text: #1a1a2e;
+    --muted: #78716c;
+    --green: #059669;
+    --red: #dc2626;
+    --pink: #c026d3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+    margin-bottom: 32px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin-bottom: 32px;
+  }
+
+  .month-block {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+
+  .month-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .progress-item { cursor: default; }
+
+  .progress-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    transition: color 0.2s;
+  }
+
+  .progress-item:hover .progress-label { color: var(--text); }
+  .progress-item:hover .progress-label span:last-child { font-weight: 700; }
+
+  .progress-bar-bg {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: filter 0.2s;
+  }
+
+  .progress-item:hover .progress-bar-fill { filter: brightness(1.15); }
+
+  .fill-green  { background: var(--green); }
+  .fill-amber  { background: var(--accent3); }
+  .fill-red    { background: var(--red); }
+  .fill-accent { background: var(--accent); }
+
+  .week-nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .week-tab {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .week-tab:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    transform: translateY(-2px);
+  }
+
+  .week-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,58,237,0.05);
+  }
+
+  .week-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .week-tab .tab-dates {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .week-tab.active .tab-dates { color: var(--accent); opacity: 0.7; }
+  .week-tab.no-data { opacity: 0.4; cursor: default; }
+  .week-tab.no-data:hover { transform: none; border-color: var(--border); color: var(--muted); }
+
+  .week-content { display: none; }
+  .week-content.active { display: block; }
+
+  .direction { margin-bottom: 44px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    cursor: default;
+    transition: letter-spacing 0.2s;
+  }
+
+  .section-label:hover { letter-spacing: 0.25em; }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    min-width: 20px;
+  }
+
+  .section-label .count { color: var(--muted); font-weight: 400; }
+
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 11px; line-height: 1.65; }
+
+  thead th {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 10px 14px; text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap; background: var(--bg);
+    position: sticky; top: 0; z-index: 2;
+  }
+
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    background: var(--surface);
+    transition: background 0.15s;
+  }
+
+  tbody tr { cursor: default; }
+  tbody tr:hover td { background: #e8f6fb !important; }
+  tbody tr:hover .pname { color: var(--accent2); }
+
+  .pname {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; white-space: nowrap;
+    min-width: 120px; transition: color 0.15s;
+  }
+
+  td.col-plan, td.col-fact, td.col-next { min-width: 160px; }
+  td.col-goal { min-width: 140px; }
+
+  ul.li { list-style: none; padding: 0; }
+  ul.li li { padding-left: 14px; position: relative; margin-bottom: 3px; }
+  ul.li li::before { content: '→'; position: absolute; left: 0; color: var(--border); font-size: 10px; }
+
+  .badge {
+    display: inline-block; font-size: 8px; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 2px;
+    border: 1px solid; font-weight: 700; white-space: nowrap;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .badge:hover { transform: scale(1.08); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+  .b-active   { border-color: var(--green);   color: var(--green);   background: rgba(5,150,105,0.06); }
+  .b-kp       { border-color: var(--accent);  color: var(--accent);  background: rgba(124,58,237,0.06); }
+  .b-wait     { border-color: var(--accent3); color: var(--accent3); background: rgba(217,119,6,0.06); }
+  .b-done     { border-color: var(--green);   color: #fff;           background: var(--green); }
+  .b-research { border-color: var(--accent2); color: var(--accent2); background: rgba(8,145,178,0.06); }
+  .b-pause    { border-color: var(--muted);   color: var(--muted);   background: rgba(120,113,108,0.06); }
+
+  .em-green  { color: var(--green);   font-weight: 700; }
+  .em-amber  { color: var(--accent3); font-weight: 700; }
+  .em-accent { color: var(--accent);  font-weight: 700; }
+
+  .open-btn {
+    display: inline-block;
+    margin-top: 16px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    padding: 6px 14px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .open-btn:hover { background: var(--accent2); color: #fff; }
+
+  .empty-note {
+    font-size: 10px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 40px 0 12px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .back-link:hover { color: var(--accent); border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+
+
+  <h1><span class="highlight">Dashboard</span><br>Май 2026</h1>
+  <div class="subtitle">Еженедельный трекинг · факт / план / цель месяца</div>
+  <div class="divider"></div>
+
+  <!-- ПРОГРЕСС МАЯ -->
+  <div class="month-block">
+    <div class="month-title">⚡ Май 2026 · прогресс</div>
+    <div class="progress-grid">
+      <div class="progress-item">
+        <div class="progress-label"><span>IT-проекты</span><span>—</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-amber" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>AI-обучение</span><span>—</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Наставничество</span><span>—</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-amber" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Медиа</span><span>—</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-red" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Оптимизация</span><span>—</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-accent" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK TABS -->
+  <div class="week-nav">
+    <div class="week-tab active" onclick="switchTab('w19')">
+      W19 · текущая
+      <span class="tab-dates">4–10 мая</span>
+    </div>
+    <div class="week-tab" onclick="switchTab('w20')">
+      W20
+      <span class="tab-dates">11–17 мая</span>
+    </div>
+    <div class="week-tab" onclick="switchTab('w21')">
+      W21
+      <span class="tab-dates">18–24 мая</span>
+    </div>
+    <div class="week-tab" onclick="switchTab('w22')">
+      W22
+      <span class="tab-dates">25–31 мая</span>
+    </div>
+  </div>
+
+  <!-- ══════ W19 ══════ -->
+  <div class="week-content active" id="tab-w19">
+
+    <div class="direction">
+      <div class="section-label">💻 IT-проекты</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+          <th>Цель к 31.05</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">SHKOLA.APP</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact">—</td>
+            <td class="col-next"><ul class="li">
+              <li>Провести созвон во вт</li>
+              <li>Подготовить и отправить предложение</li>
+            </ul></td>
+            <td class="col-goal">Подписание по 1 направлению<br>и/или монетизируемый контакт</td>
+          </tr>
+          <tr>
+            <td class="pname">ГлобалДент</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Вт 10:00 проведён звонок</li>
+              <li>Подготовлены документы</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Подписать 2 этап</li>
+              <li>Получить оплату</li>
+              <li>Стартовать</li>
+            </ul></td>
+            <td class="col-goal">Успешно завершить 2 этап<br>(первые числа июня)</td>
+          </tr>
+          <tr>
+            <td class="pname">Evraz</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-fact">—</td>
+            <td class="col-next"><ul class="li">
+              <li>Написать в формате презентации Вити: что умеем + как подключаемся + упомянуть Hantico</li>
+            </ul></td>
+            <td class="col-goal">Подписание по 1 направлению<br>и/или монетизируемый контакт</td>
+          </tr>
+          <tr>
+            <td class="pname">Hantico</td>
+            <td><span class="badge b-wait">После майских</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Напомнили про ОС</li>
+              <li>Ответ: вернутся после майских</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Напомнить про ОС</li>
+              <li>Согласовать дискавери-звонок</li>
+            </ul></td>
+            <td class="col-goal">Подписание по 1 направлению<br>и/или монетизируемый контакт</td>
+          </tr>
+          <tr>
+            <td class="pname">Краудфандинг (Алексей)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Проведён звонок</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить про ТЗ</li></ul></td>
+            <td class="col-goal">Подписание и старт проекта<br>и/или монетизируемый контакт</td>
+          </tr>
+          <tr>
+            <td class="pname">Лирика (Алексей)</td>
+            <td><span class="badge b-pause">Обсуждение</span></td>
+            <td class="col-fact"><ul class="li"><li>На этапе обсуждения</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить</li></ul></td>
+            <td class="col-goal">Подписание и старт проекта<br>и/или монетизируемый контакт</td>
+          </tr>
+          <tr>
+            <td class="pname">Донат-платформа<br>(ФизтехСоюз)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Доработаны ответы для юриста</li>
+              <li>Получена и отредактирована юрмодель</li>
+              <li>Отправлены уточняющие вопросы юристу</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Получить доработанную версию</li>
+              <li>Отправить Саше</li>
+              <li>Запланировать зум с юристами</li>
+            </ul></td>
+            <td class="col-goal">Подписание и старт проекта<br>и/или монетизируемый контакт</td>
+          </tr>
+          <tr>
+            <td class="pname">Новые контакты</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact">— / ?</td>
+            <td class="col-next"><ul class="li"><li>2–3 новых контакта</li></ul></td>
+            <td class="col-goal">4 отправленных КП</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🧠 AI-обучение</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+          <th>Цель к 31.05</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Курс ИИ для бизнеса</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Пересборка вебинара (сделано)</li>
+              <li>Юридические документы (сделано)</li>
+              <li>Провести два веба (сделано)</li>
+              <li>Создать платформу (платформа готова, MVP отправлен в чат)</li>
+              <li>Подготовить материалы для 00 модуля (материал готов, корректируем; шаблон презы сделан)</li>
+              <li>Создать чат и сопровождение (перенесено на вторник)</li>
+              <li>Собрать потребность с предпринимателей (1 человек на курсе; рассылка завтра)</li>
+              <li>Оцифровка курса Сколково (сделано, отправлено в группу)</li>
+              <li>Собрать людей на веб (перенесли на 3 мая, 14 человек в среднем)</li>
+              <li>Нагетс комьюнити (скачали все видео, транскрибируют 60+ видео)</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Подключить кошелёк для оплаты</li>
+              <li>Сделать аналитику для курса как бизнес</li>
+              <li>Провести вебинар для предпринимателей</li>
+              <li>Провести 00 модуль курса во вторник</li>
+              <li>Создать чат с клиентами и начать сопровождение</li>
+              <li>Медийное освещение курса (истории, рассылка, пинг зрителей)</li>
+              <li>Выгрузить материалы на платформу + доп промты/шаблоны</li>
+              <li>Потестировать гипотезу с ИИ роликами, страница в Instagram</li>
+              <li>Сделать канал про новости ИИ</li>
+              <li>Отсмотреть 3 урока с Нагетса, внедрить в курс</li>
+            </ul></td>
+            <td class="col-goal"><span class="em-amber">100 000 ₽</span> с продаж</td>
+          </tr>
+          <tr>
+            <td class="pname">Курс Cursor</td>
+            <td><span class="badge b-done">Завершён</span></td>
+            <td class="col-fact">Курс проведён (ОС собрана)</td>
+            <td class="col-next">—</td>
+            <td class="col-goal">ОС собрана</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤝 Партнёрки</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+          <th>Цель к 31.05</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Школково<br>— промокод</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact">—</td>
+            <td class="col-next"><ul class="li"><li>Проанализировать инфоповоды и составить план коммуникации для рекламы</li></ul></td>
+            <td class="col-goal">Опубликованная реклама</td>
+          </tr>
+          <tr>
+            <td class="pname">Оцифровка<br>социального капитала</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><span class="empty-note">— уточняется</span></td>
+            <td class="col-goal">Соцкапитал оцифрован</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎓 Наставничество</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+          <th>Цель к 31.05</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Наставничество</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Проведён модуль</li></ul></td>
+            <td class="col-next"><span class="empty-note">— уточняется</span></td>
+            <td class="col-goal">—</td>
+          </tr>
+          <tr>
+            <td class="pname">Корректировки<br>по итогам Прохора</td>
+            <td><span class="badge b-wait">В процессе</span></td>
+            <td class="col-fact"><ul class="li"><li>Подготовлены правки в документы</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить согласование и актуальные документы</li></ul></td>
+            <td class="col-goal">Скорректированное направление<br>с т.з. ПДн</td>
+          </tr>
+          <tr>
+            <td class="pname">Новые контакты</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact">— / ?</td>
+            <td class="col-next"><ul class="li"><li>2–3 новых контакта</li></ul></td>
+            <td class="col-goal">4 наставляемых (?)</td>
+          </tr>
+          <tr>
+            <td class="pname">Вера Александровна</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Написали повторно</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Отправить анонс и согласовать онлайн-вебинар</li></ul></td>
+            <td class="col-goal">—</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤝 Сообщество АССИСТ+</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+          <th>Цель к 31.05</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Посты в ТГ (2/нед)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
+            <td class="col-goal">2 поста/нед стабильно</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎬 Медиа</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+          <th>Цель к 31.05</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Первые (ИРИ)</td>
+            <td><span class="badge b-wait">Ожидание</span></td>
+            <td class="col-fact"><ul class="li"><li>Напомнили Марине про ОС</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить про ОС повторно (после 18.05)</li></ul></td>
+            <td class="col-goal">Получить ОС</td>
+          </tr>
+          <tr>
+            <td class="pname">Корректировки Прохора<br>(Медиа)</td>
+            <td><span class="badge b-wait">В процессе</span></td>
+            <td class="col-fact">—</td>
+            <td class="col-next"><ul class="li"><li>Получить ОС от ассистента Марины</li></ul></td>
+            <td class="col-goal">Скорректированное направление<br>с т.з. ПДн</td>
+          </tr>
+          <tr>
+            <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
+            <td><span class="badge b-research">Go/no-go</span></td>
+            <td class="col-fact">?</td>
+            <td class="col-next"><span class="empty-note">— уточняется</span></td>
+            <td class="col-goal">Go/no-go решение</td>
+          </tr>
+          <tr>
+            <td class="pname">Международный форум<br>для детских садов</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Согласован зум с Аидой на вт</li>
+              <li>Согласован зум с Мариной на пн</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Провести 2 зума</li></ul></td>
+            <td class="col-goal">Подписание и старт проекта<br>и/или монетизируемый контакт</td>
+          </tr>
+          <tr>
+            <td class="pname">Вика-Дима + ИИ</td>
+            <td><span class="badge b-pause">Пауза</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Напомнили про кейсы с ИИ-контентом</li>
+              <li>ОС: нужна допподписка + нет средств, дорого</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Получить кейсы</li></ul></td>
+            <td class="col-goal">Упаковать кейсы в портфолио</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">⚙️ Внутренняя оптимизация</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+          <th>Цель к 31.05</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Командные Zoom'ы</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Проведён зум</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести зум</li></ul></td>
+            <td class="col-goal">4 Zoom-встречи команды</td>
+          </tr>
+          <tr>
+            <td class="pname">Финансы P&amp;L</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Занесены оплаты за Claude-подписки</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Вести таблицу</li></ul></td>
+            <td class="col-goal">P&amp;L актуален</td>
+          </tr>
+          <tr>
+            <td class="pname">Нейросеть Ghost<br>и подобные</td>
+            <td><span class="badge b-done">Готово ✓</span></td>
+            <td class="col-fact"><ul class="li"><li>Разобралась в предложениях на рынке: подключение ИИ-базы к зумам ✓</li></ul></td>
+            <td class="col-next">—</td>
+            <td class="col-goal">—</td>
+          </tr>
+          <tr>
+            <td class="pname">Зарубежные сервисы</td>
+            <td><span class="badge b-done">Готово ✓</span></td>
+            <td class="col-fact"><ul class="li"><li>Нашла решение для оплаты зарубежных сервисов ✓</li></ul></td>
+            <td class="col-next">—</td>
+            <td class="col-goal">—</td>
+          </tr>
+          <tr>
+            <td class="pname">Перенести записи<br>зумов на Г Диск Антона</td>
+            <td><span class="badge b-done">Готово ✓</span></td>
+            <td class="col-fact">Записи перенесены ✓</td>
+            <td class="col-next">—</td>
+            <td class="col-goal">—</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">👩‍💻 Команда</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Кто</th><th>Статус</th>
+          <th>Факт W18</th>
+          <th>План W19</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Маргарита</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Потестила несколько библиотек для совместного использования Claude, вывела его в интерактивную веб-консоль</li>
+              <li>Собрала MVP платформы для платного курса: купила домен (oreshkinai.ru), настроила админ-панель с аналитикой пользователей, ограничением входа на количество устройств, загрузкой видео с водяными знаками и доп. материалами</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Закончить платформу для курса</li>
+              <li>Ещё раз списаться с Витей по тестовому для ГлобалДент</li>
+              <li>Согласовать структуру для дальнейшей работы в ИИ-направлении для Агоры</li>
+              <li>Закончить ТГ-бот для лицея</li>
+            </ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-w19 -->
+
+
+  <!-- ══════ W20 ══════ -->
+  <div class="week-content" id="tab-w20">
+
+    <div class="direction">
+      <div class="section-label">💻 IT-проекты</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W19</th>
+          <th>План W20</th>
+          <th>Цель мая</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Лига плюща<br>(ФизтехСоюз)</td>
+            <td><span class="badge b-wait">Перенос с апреля</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li">
+              <li>Перенесено с апреля — начать на неделе 11–17 мая</li>
+            </ul></td>
+            <td class="col-goal">Стартовали</td>
+          </tr>
+          <tr>
+            <td class="pname">Evraz</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><span class="empty-note">— уточняется</span></td>
+            <td class="col-goal">Подписание контракта</td>
+          </tr>
+          <tr>
+            <td class="pname">Новые контакты</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>9–24.05: серия звонков</li></ul></td>
+            <td class="col-goal">2–3 новых контакта</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🧠 AI-обучение</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W19</th>
+          <th>План W20</th>
+          <th>Цель мая</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Курс ИИ для бизнеса</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><span class="empty-note">— будет заполнено</span></td>
+            <td class="col-goal"><span class="em-amber">100 000 ₽</span> с продаж</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-w20 -->
+
+
+  <!-- ══════ W21 ══════ -->
+  <div class="week-content" id="tab-w21">
+    <div class="no-data-card">Неделя 18–24 мая · данные появятся позже</div>
+  </div>
+
+  <!-- ══════ W22 ══════ -->
+  <div class="week-content" id="tab-w22">
+    <div class="no-data-card">Неделя 25–31 мая · данные появятся позже</div>
+  </div>
+
+
+  <div class="footer">
+    Dashboard · Май 2026 · обновлено 28.04.2026 · W19 — следующая неделя
+  </div>
+
+</div>
+
+<script>
+  function switchTab(week) {
+    document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.week-content').forEach(c => c.classList.remove('active'));
+
+    const tabs = document.querySelectorAll('.week-tab');
+    const map = { w19: 0, w20: 1, w21: 2, w22: 3 };
+    if (tabs[map[week]]) tabs[map[week]].classList.add('active');
+
+    const content = document.getElementById('tab-' + week);
+    if (content) content.classList.add('active');
+  }
+</script>
+</body>
+</html>

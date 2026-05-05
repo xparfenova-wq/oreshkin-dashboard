@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Проекты 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: #e2ddd8;
+    --accent: #7c3aed;
+    --accent2: #0891b2;
+    --accent3: #d97706;
+    --text: #1a1a2e;
+    --muted: #78716c;
+    --green: #059669;
+    --red: #dc2626;
+    --pink: #c026d3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  /* ── HEADER ── */
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+    margin-bottom: 32px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin-bottom: 32px;
+  }
+
+  /* ── MONTH PROGRESS ── */
+  .month-block {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+
+  .month-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .progress-item { cursor: default; }
+
+  .progress-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    transition: color 0.2s;
+  }
+
+  .progress-item:hover .progress-label { color: var(--text); }
+  .progress-item:hover .progress-label span:last-child { font-weight: 700; }
+
+  .progress-bar-bg {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: filter 0.2s;
+  }
+
+  .progress-item:hover .progress-bar-fill { filter: brightness(1.15); }
+
+  .fill-green  { background: var(--green); }
+  .fill-amber  { background: var(--accent3); }
+  .fill-red    { background: var(--red); }
+  .fill-accent { background: var(--accent); }
+
+  /* ── WEEK TABS ── */
+  .week-nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .week-tab {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .week-tab:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    transform: translateY(-2px);
+  }
+
+  .week-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,58,237,0.05);
+  }
+
+  .week-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .week-tab .tab-dates {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .week-tab.active .tab-dates { color: var(--accent); opacity: 0.7; }
+  .week-tab.no-data { opacity: 0.4; cursor: default; }
+  .week-tab.no-data:hover { transform: none; border-color: var(--border); color: var(--muted); }
+
+  /* ── WEEK CONTENT ── */
+  .week-content { display: none; }
+  .week-content.active { display: block; }
+
+  /* ── SECTION ── */
+  .direction { margin-bottom: 44px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    cursor: default;
+    transition: letter-spacing 0.2s;
+  }
+
+  .section-label:hover { letter-spacing: 0.25em; }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    min-width: 20px;
+  }
+
+  .section-label .count { color: var(--muted); font-weight: 400; }
+
+  /* ── TABLE ── */
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 11px; line-height: 1.65; }
+
+  thead th {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 10px 14px; text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap; background: var(--bg);
+    position: sticky; top: 0; z-index: 2;
+  }
+
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    background: var(--surface);
+    transition: background 0.15s;
+  }
+
+  tbody tr { cursor: default; }
+  tbody tr:hover td { background: #e8f6fb !important; }
+  tbody tr:hover .pname { color: var(--accent2); }
+
+  tbody tr.row-warn td:first-child { border-left: 3px solid var(--accent3); }
+  tbody tr.row-done td:first-child { border-left: 3px solid var(--green); }
+  tbody tr.row-hot  td:first-child { border-left: 3px solid var(--red); }
+
+  .pname {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; white-space: nowrap;
+    min-width: 120px; transition: color 0.15s;
+  }
+
+  td.col-plan, td.col-fact, td.col-next { min-width: 160px; }
+  td.col-goal { min-width: 140px; }
+
+  ul.li { list-style: none; padding: 0; }
+  ul.li li { padding-left: 14px; position: relative; margin-bottom: 3px; }
+  ul.li li::before { content: '→'; position: absolute; left: 0; color: var(--border); font-size: 10px; }
+
+  .badge {
+    display: inline-block; font-size: 8px; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 2px;
+    border: 1px solid; font-weight: 700; white-space: nowrap;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .badge:hover { transform: scale(1.08); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+  .b-active   { border-color: var(--green);   color: var(--green);   background: rgba(5,150,105,0.06); }
+  .b-kp       { border-color: var(--accent);  color: var(--accent);  background: rgba(124,58,237,0.06); }
+  .b-wait     { border-color: var(--accent3); color: var(--accent3); background: rgba(217,119,6,0.06); }
+  .b-done     { border-color: var(--green);   color: #fff;           background: var(--green); }
+  .b-research { border-color: var(--accent2); color: var(--accent2); background: rgba(8,145,178,0.06); }
+  .b-pause    { border-color: var(--muted);   color: var(--muted);   background: rgba(120,113,108,0.06); }
+  .b-hot      { border-color: var(--red);     color: var(--red);     background: rgba(220,38,38,0.06); }
+
+  .em-green  { color: var(--green);   font-weight: 700; }
+  .em-red    { color: var(--red);     font-weight: 700; }
+  .em-amber  { color: var(--accent3); font-weight: 700; }
+  .em-accent { color: var(--accent);  font-weight: 700; }
+
+  tbody tr:hover .em-red    { text-shadow: 0 0 8px rgba(220,38,38,0.3); }
+  tbody tr:hover .em-amber  { text-shadow: 0 0 8px rgba(217,119,6,0.3); }
+  tbody tr:hover .em-green  { text-shadow: 0 0 8px rgba(5,150,105,0.3); }
+  tbody tr:hover .em-accent { text-shadow: 0 0 8px rgba(124,58,237,0.3); }
+
+  /* ── SUMMARY CARDS ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+
+  .summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+    border-color: var(--accent2);
+  }
+
+  .summary-card-dir {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .summary-card ul { list-style: none; padding: 0; }
+  .summary-card ul li {
+    font-size: 11px;
+    padding: 3px 0 3px 14px;
+    position: relative;
+    border-bottom: 1px solid var(--bg);
+    color: var(--muted);
+  }
+  .summary-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-size: 9px; }
+  .summary-card ul li.warn::before { content: '→'; color: var(--accent3); }
+  .summary-card ul li.done { color: var(--text); }
+
+  .open-btn {
+    display: inline-block;
+    margin-top: 16px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    padding: 6px 14px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .open-btn:hover {
+    background: var(--accent2);
+    color: #fff;
+  }
+
+  .no-data-card {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    padding: 32px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 40px 0 12px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── W18 empty badge ── */
+  .w18-empty {
+    font-size: 10px;
+    color: var(--muted);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div style="display:flex; justify-content:flex-end; margin-bottom:24px;">
+    <a href="2026-май-dashboard.html" style="font-family:'Unbounded',sans-serif;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#0891b2;border:1px solid #0891b2;padding:6px 14px;text-decoration:none;">Май 2026 →</a>
+  </div>
+
+  <!-- HEADER -->
+  <h1><span class="highlight">Dashboard</span><br>Апрель 2026</h1>
+  <div class="subtitle">Еженедельный трекинг · факт / план / цель месяца</div>
+  <div class="divider"></div>
+
+  <!-- ПРОГРЕСС АПРЕЛЯ -->
+  <div class="month-block">
+    <div class="month-title">⚡ Апрель 2026 · прогресс к 30.04</div>
+    <div class="progress-grid">
+      <div class="progress-item">
+        <div class="progress-label"><span>IT-проекты</span><span>~40%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-amber" style="width:40%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>AI-обучение</span><span>~65%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-green" style="width:65%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Наставничество</span><span>~55%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-amber" style="width:55%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Медиа</span><span>~30%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-red" style="width:30%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Оптимизация</span><span>~50%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill fill-accent" style="width:50%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK TABS -->
+  <div class="week-nav">
+    <div class="week-tab" onclick="switchTab('w14')">
+      W14
+      <span class="tab-dates">31 мар–5 апр</span>
+    </div>
+    <div class="week-tab" onclick="switchTab('w15')">
+      W15
+      <span class="tab-dates">6–12 апреля</span>
+    </div>
+    <div class="week-tab" onclick="switchTab('w16')">
+      W16
+      <span class="tab-dates">13–19 апреля</span>
+    </div>
+    <div class="week-tab active" onclick="switchTab('w17')">
+      W17 · текущая
+      <span class="tab-dates">20–26 апреля</span>
+    </div>
+    <div class="week-tab" onclick="switchTab('w18')">
+      W18
+      <span class="tab-dates">27 апр–2 мая</span>
+    </div>
+  </div>
+
+
+  <!-- ══════ W14 ══════ -->
+  <div class="week-content" id="tab-w14">
+
+    <div class="direction">
+      <div class="section-label">💻 IT-проекты <span class="count">· 5</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W14</th>
+          <th>План →</th>
+        </tr></thead>
+        <tbody>
+          <tr class="row-hot">
+            <td class="pname">Миллион на недвижке</td>
+            <td><span class="badge b-hot">Отказ</span></td>
+            <td><ul class="li"><li>Отказ от сотрудничества, причиной назвали более выгодное экономически предложение</li></ul></td>
+            <td>—</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">ГлобалДент</td>
+            <td><span class="badge b-wait">Оплата</span></td>
+            <td><ul class="li"><li>Договор на подписании и счёт стоит в очереди на оплату</li></ul></td>
+            <td><ul class="li"><li>Получить оплату и приступить к работе</li></ul></td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">Остальные проекты от Алексея</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Отправили документ с реализованными проектами Вити</li></ul></td>
+            <td><ul class="li"><li>Написать 8.04 для согласования зума по следующему проекту</li><li>Получить через 2 недели ОС по проекту Лирика</li></ul></td>
+          </tr>
+          <tr>
+            <td class="pname">Лига плюща · Платформа-сообщество</td>
+            <td><span class="badge b-research">Ресёрч</span></td>
+            <td><ul class="li"><li>Есть проведённый ресёрч и варианты дальнейшей реализации идеи</li></ul></td>
+            <td><ul class="li"><li>Изучение и отправка Лёше для ОС</li></ul></td>
+          </tr>
+          <tr>
+            <td class="pname">Донат-платформа от выпускников преподавателям</td>
+            <td><span class="badge b-research">Ресёрч</span></td>
+            <td><ul class="li"><li>Есть проведённый ресёрч и варианты дальнейшей реализации идеи</li></ul></td>
+            <td><ul class="li"><li>Получение ОС от Лёши</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🌐 Агора <span class="count">· сайт</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W14</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Агора · Сайт</td>
+            <td><span class="badge b-done">Готово ✓</span></td>
+            <td><ul class="li"><li>Полностью завершена работа по сайту: готовы английская и русская версии, а также мобильная и десктопная</li></ul></td>
+            <td><ul class="li"><li>Китайская версия</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎓 Наставничество <span class="count">· курс по Cursor</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W14</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Курс по Cursor</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Проведение модуля в понедельник</li><li>Сопровождение участников курса и работа с их контекстами</li></ul></td>
+            <td><ul class="li"><li>Запись модуля</li><li>Еженедельный созвон с ребятами</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🧠 AI-обучение</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W14</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Разработка презентации для вебинара</td>
+            <td><span class="badge b-done">Сделано ✓</span></td>
+            <td><ul class="li"><li>Сделано</li></ul></td>
+            <td><ul class="li"><li>Согласовать и отдать в дизайн (если не подходит текущий)</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">📡 Медиа <span class="count">· 5</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W14</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Теорема облаков / популяризация STEM</td>
+            <td><span class="badge b-research">Ресёрч</span></td>
+            <td><ul class="li"><li>Есть проведённый ресёрч и варианты дальнейшей реализации идеи</li></ul></td>
+            <td><ul class="li"><li>Изучение и отправка Лёше для ОС</li></ul></td>
+          </tr>
+          <tr>
+            <td class="pname">Международный МФТИ</td>
+            <td><span class="badge b-research">Ресёрч</span></td>
+            <td><ul class="li"><li>Есть проведённый ресёрч и варианты дальнейшей реализации идеи</li></ul></td>
+            <td><ul class="li"><li>Изучение и отправка Лёше для ОС</li></ul></td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Первые</td>
+            <td><span class="badge b-wait">Дедлайн</span></td>
+            <td><ul class="li"><li>Готова пояснительная записка</li><li>Внесены корректировки</li></ul></td>
+            <td><ul class="li"><li>Уточнить корректность 07.04 у Марины</li></ul></td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">Дымов: интеграция в киберспорт</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Сделана КП-презентация</li></ul></td>
+            <td><ul class="li"><li>Получить ОС от Ярослава 10.04</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤖 Внутренняя бот-архитектура <span class="count">· инфра</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Направление</th><th>Статус</th><th>Факт W14</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Бот-архитектура</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li">
+              <li>Боты переключены на корпоративную подписку АССИСТ+</li>
+              <li>Проведён аудит АССИСТ-ассистента, собран план улучшений</li>
+              <li>Подготовлены и разосланы опросники для сбора «общего мозга» по направлениям (80+ вопросов)</li>
+              <li>Из бенчмарка Dragon вычленены вопросы для динамического графового RAG</li>
+              <li>Написан мануал по Git, VS Code для курса</li>
+              <li>Получены консультации от Вити по безопасности</li>
+              <li>По АССИСТ+ первичный граф знаний (в процессе)</li>
+              <li>Куплен сервер на Hostinger (CPU, 8 ГБ, 100 ГБ SSD)</li>
+            </ul></td>
+            <td><ul class="li">
+              <li>Сборка общего решения с графом знаний</li>
+              <li>Приведение навыков команды в формат модели</li>
+              <li>Запуск модели, тестирование командой</li>
+              <li>Документ с предложением для Алексея по переводу звонков в реальном времени</li>
+              <li>Продолжение переукомплектации курса</li>
+            </ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <a class="open-btn" href="2026-W14_31mar-05apr.html" target="_blank">↗ Открыть полный отчёт W14</a>
+  </div>
+
+
+  <!-- ══════ W15 ══════ -->
+  <div class="week-content" id="tab-w15">
+
+    <div class="direction">
+      <div class="section-label">💻 IT-проекты <span class="count">· 8</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W15</th>
+          <th>План →</th>
+        </tr></thead>
+        <tbody>
+          <tr class="row-warn">
+            <td class="pname">Миллион на недвижке</td>
+            <td><span class="badge b-wait">Ожидание</span></td>
+            <td><ul class="li"><li>Написали Екатерине с предложением провести аудит КП от подрядчиков, не получили ответ</li></ul></td>
+            <td><ul class="li"><li>Написать с аккаунта Антона напрямую Виктории</li></ul></td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">ГлобалДент</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Подписали договор, получили оплату, приступили к работе</li></ul></td>
+            <td><ul class="li"><li>Отправить результат — ТЗ — до вторника включительно</li></ul></td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">Остальные проекты от Алексея</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Собрали и отправили аналоги Slack, краудфандинг-платформ и видеочатов с переводом речи</li><li>Отправлено КП проекта Adapt</li></ul></td>
+            <td><ul class="li"><li>Напомнить / актуализировать вопрос про Zoom</li><li>Напомнить Никите про обновление файла с проектами/кейсами</li></ul></td>
+          </tr>
+          <tr>
+            <td class="pname">Лига плюща · Платформа-сообщество</td>
+            <td><span class="badge b-research">Ресёрч</span></td>
+            <td>—</td>
+            <td><ul class="li"><li>Изучение и отправка Лёше для ОС</li></ul></td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Донат-платформа от выпускников преподавателям</td>
+            <td><span class="badge b-wait">Ожидание</span></td>
+            <td><ul class="li"><li>Напоминание о концепции Лёше</li></ul></td>
+            <td><ul class="li"><li>Повторное напоминание</li></ul></td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">Hantico</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Создан общий чат с клиентом</li></ul></td>
+            <td><ul class="li"><li>Получить ответы на вопросы от Никиты</li><li>Согласовать консультацию</li></ul></td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">Евраз</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Составлено КП</li></ul></td>
+            <td><ul class="li"><li>Перенести в формат презентации и отправить на рассмотрение</li></ul></td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">Этажи</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Составлено КП</li></ul></td>
+            <td><ul class="li"><li>Проверить и отправить на рассмотрение</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🌐 Агора <span class="count">· сайт</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W15</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Агора · Сайт</td>
+            <td><span class="badge b-done">Готово ✓</span></td>
+            <td><ul class="li"><li>Завершили работу по китайской версии</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎓 Наставничество <span class="count">· форум</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W15</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Наставничество · Форум</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Созвон по грантовому конкурсу</li><li>Еженедельный созвон с ребятами с курса</li><li>Снят 6 модуль</li><li>Проведена первая форум-группа</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🧠 AI-обучение</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W15</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Подготовка к вебинару</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>Собран контент и презентация вебинара</li><li>Сделана логика и контент для бота</li><li>Собран бот</li></ul></td>
+            <td><ul class="li"><li>Согласование и проведение</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">📡 Медиа <span class="count">· 3</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W15</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Теорема облаков / STEM</td>
+            <td><span class="badge b-research">Ресёрч</span></td>
+            <td>—</td>
+            <td><ul class="li"><li>Изучение и отправка Лёше для ОС</li></ul></td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Первые</td>
+            <td><span class="badge b-wait">Ожидание</span></td>
+            <td><ul class="li"><li>Собрали пояснительную записку</li><li>Напоминание Марине</li></ul></td>
+            <td><ul class="li"><li>Получить ОС от Марины</li></ul></td>
+          </tr>
+          <tr class="row-hot">
+            <td class="pname">Дымов: интеграция в киберспорт</td>
+            <td><span class="badge b-hot">Неактуально</span></td>
+            <td><ul class="li"><li>Получили ответ: «неактуально»</li></ul></td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤖 Внутренние процессы и архитектура <span class="count">· инфра</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Направление</th><th>Статус</th><th>Факт W15</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Внутренние процессы и архитектура</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li">
+              <li>Проведён ресёрч по обновлению оператора персональных данных и подготовка к Zoom с Прохором</li>
+              <li>Куплен второй сервер, установлен Ollama для оркестрации</li>
+              <li>Боты переключены на новые серверы</li>
+              <li>Есть 3 подписки GPT-5.4 Codex для обхода лимитов</li>
+            </ul></td>
+            <td><ul class="li"><li>Синхронизация Маргариты и Вити по совместной работе</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">📱 SMM <span class="count">· 1</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Проект</th><th>Статус</th><th>Факт W15</th><th>План →</th></tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">SMM · АССИСТ+ и Медиа</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td><ul class="li"><li>АССИСТ+ и Медиа переходит к Соне</li><li>Контент-план в АССИСТ+ на неделю (2 поста)</li></ul></td>
+            <td><ul class="li"><li>Согласовать концепцию / контент-план / стратегию АССИСТ+ и Медиа</li><li>Регулярный постинг и ведение</li><li>Выложить 13.04 5–10 постов в Инст</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <a class="open-btn" href="2026-W15_06-12apr.html" target="_blank">↗ Открыть полный отчёт W15</a>
+  </div>
+
+
+  <!-- ══════ W16 ══════ -->
+  <div class="week-content" id="tab-w16">
+    <div class="direction">
+      <div class="section-label">💻 IT-проекты <span class="count">· KPI: 10 новых встреч/мес</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>План W16 (13–19 апр)</th>
+          <th>Факт W16</th>
+          <th>Задачи W17 (20–26 апр)</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">ГлобалДент</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li">
+              <li>Отправить ТЗ (1 этап) — до вт. W16</li>
+              <li>Инициировать согласование 2 этапа</li>
+            </ul></td>
+            <td class="col-fact"><ul class="li"><li>ТЗ отправлено ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Согласовать 1 этап, подписать 2 этап и начать разработку 2 этапа</li></ul></td>
+            <td class="col-goal"><span class="em-green">1 этап закрыт</span><br>2 этап подписан<br>+350К согласовано<br>Поддержка 11–35К/мес</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Евраз</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-plan"><ul class="li"><li>Перенести КП в презентацию</li><li>Отправить на рассмотрение</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>КП составлено и отправлено ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить / получить ОС</li></ul></td>
+            <td class="col-goal">Подписание пилота MVP<br>AI-помощника</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Этажи</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-plan"><ul class="li"><li>Проверить и отправить КП</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Отправлено ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить и получить ОС</li></ul></td>
+            <td class="col-goal">Подписание контракта<br>по 1 направлению</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Hantico</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Арслан: подобрать спецов (до 21.04)</li><li>Согласовать и провести консультацию</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>В процессе, идёт подбор</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Подобрать специалистов, подготовить предложение и провести консультацию</li></ul></td>
+            <td class="col-goal">Консультация → КП →<br>подписание по 1 направлению</td>
+          </tr>
+          <tr>
+            <td class="pname">Лирика (Алексей)</td>
+            <td><span class="badge b-wait">Ожидание ОС</span></td>
+            <td class="col-plan"><ul class="li"><li>Напомнить Алексею про ОС</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Напоминание отправлено ✓</li><li>Ожидаем ОС ~22–26 апр</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить ОС от Алексея</li><li>Согласовать бюджет (~2.1–2.6М)</li></ul></td>
+            <td class="col-goal">50% аванс получен<br>Разработка стартовала</td>
+          </tr>
+          <tr>
+            <td class="pname">Краудфандинг (Алексей)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Напомнить об обсуждении проекта в Zoom</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Согласован Zoom на среду 13:30</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести Zoom</li><li>КП до 30.04</li></ul></td>
+            <td class="col-goal"><span class="em-accent">КП отправлено</span><br>Цель: 2 000 000 ₽</td>
+          </tr>
+          <tr>
+            <td class="pname">Лига плюща (ФизтехСоюз)</td>
+            <td><span class="badge b-research">Ресёрч</span></td>
+            <td class="col-plan"><ul class="li"><li>Изучить варианты и отправить Лёше</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Ресёрч проведён ранее ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Изучить и отправить Лёше</li></ul></td>
+            <td class="col-goal">ОС Антона получена<br>3-мес цель: 1М+ ₽</td>
+          </tr>
+          <tr>
+            <td class="pname">Донат-платформа (ФизтехСоюз)</td>
+            <td><span class="badge b-wait">Ожидание</span></td>
+            <td class="col-plan"><ul class="li"><li>Повторное напоминание Лёше</li></ul></td>
+            <td class="col-fact"><ul class="li">
+              <li>Проведён Zoom с Лёшей</li>
+              <li>Собран прототип</li>
+              <li>Получена стоимость юрмодели от Вики</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Получить ОК по запуску подготовки юрмодели</li>
+              <li>ОС по следующим шагам от Лёши</li>
+            </ul></td>
+            <td class="col-goal">Подтверждение концепции<br>+ договор</td>
+          </tr>
+          <tr>
+            <td class="pname">Новые контакты / лиды</td>
+            <td><span class="badge b-active">KPI</span></td>
+            <td class="col-plan"><ul class="li"><li>2–3 новых контакта за неделю</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>—</li></ul></td>
+            <td class="col-next"><ul class="li"><li>2–3 новых контакта</li></ul></td>
+            <td class="col-goal">5 контактов за апрель<br>1 КП отправлено</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🧠 AI-обучение <span class="count">· курс по ИИ для бизнеса · курс Cursor</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>План W16 (13–19 апр)</th>
+          <th>Факт W16</th>
+          <th>Задачи W17 (20–26 апр)</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Вебинар по AI для предпринимателей</td>
+            <td><span class="badge b-done">Проведён</span></td>
+            <td class="col-plan"><ul class="li"><li>Согласование и проведение вебинара</li></ul></td>
+            <td class="col-fact"><ul class="li">
+              <li>2 вебинара проведено (20–21.04 и 23–24.04)</li>
+              <li>Регистрации собраны, воронка в курс</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Оценить конверсию</li><li>Обработать лиды в курс</li></ul></td>
+            <td class="col-goal"><span class="em-green">Вебинары проведены ✓</span></td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Курс ИИ для бизнеса</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Подготовка + Вебинар, 2 сайта, материалы после вебинара</li></ul></td>
+            <td class="col-fact"><ul class="li">
+              <li>Внесли правки в презу</li>
+              <li>Собрали вопросы для кастдева и ОС после вебинара</li>
+              <li>Сделали лендинг вебинара, программу курса, презентацию 1 урока и допматериалы 1 модуля</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Доформировать программу курса</li>
+              <li>Тест-драйв на одном предпринимателе</li>
+              <li>Сделать сайт для курса</li>
+            </ul></td>
+            <td class="col-goal"><span class="em-green">100 000 ₽ с продаж курса</span></td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Курс Cursor</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li">
+              <li>Еженедельный созвон с участниками</li>
+              <li>Подготовка к питчу проектов</li>
+              <li>Отправить 2 модуля</li>
+            </ul></td>
+            <td class="col-fact"><ul class="li"><li>Все выполнено ✓</li></ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Провести питчинг</li>
+              <li>Скинуть 8 модуль</li>
+              <li>Завершить курс</li>
+            </ul></td>
+            <td class="col-goal">1 человек в команду<br>1 выпущенный поток<br>ОС собрана</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎓 Наставничество <span class="count">· форум-группы · Олеся ответственная</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>План W16</th>
+          <th>Факт W16</th>
+          <th>Задачи W17 (до 27.04)</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Наставничество</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Запланировать модуль по тайм-менеджменту</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Сделана преза для модуля ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести модуль о проектах в наставничестве</li></ul></td>
+            <td class="col-goal">Все модули сданы</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Корректировки по итогам Прохора</td>
+            <td><span class="badge b-kp">До 30.04</span></td>
+            <td class="col-plan"><ul class="li"><li>—</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Задача поставлена после созвона с Прохором</li></ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Внести корректировки для соответствия ОК</li>
+              <li><span class="em-amber">Дедлайн: 30.04</span></li>
+            </ul></td>
+            <td class="col-goal">Наставничество соответствует ОК от Прохора</td>
+          </tr>
+          <tr>
+            <td class="pname">Кандидат в команду</td>
+            <td><span class="badge b-active">Запланировано</span></td>
+            <td class="col-plan"><ul class="li"><li>—</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>—</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Списаться с рассматриваемым кандидатом</li></ul></td>
+            <td class="col-goal">Решение по кандидату</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤝 Сообщество АССИСТ+ <span class="count">· SMM</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>План W16</th>
+          <th>Факт W16</th>
+          <th>Задачи W17 (20–26 апр)</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr class="row-warn">
+            <td class="pname">Посты W17 (2 поста)</td>
+            <td><span class="badge b-active">Запланировано</span></td>
+            <td class="col-plan"><ul class="li"><li>Поддержание: 2 поста/нед вместо 2–3</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Ранее: посты публиковались Соней</li><li>Соня ушла — переход к Никите</li></ul></td>
+            <td class="col-next"><ul class="li"><li>2 поста за W17 (20–26 апр)</li></ul></td>
+            <td class="col-goal">2 поста/нед стабильно<br>Итого апрель: 8 постов</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Корректировки по итогам Прохора</td>
+            <td><span class="badge b-kp">До 30.04</span></td>
+            <td class="col-plan"><ul class="li"><li>—</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Задача после созвона с Прохором</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Внести корректировки АССИСТ+</li><li><span class="em-amber">Дедлайн: 30.04</span></li></ul></td>
+            <td class="col-goal">АССИСТ+ соответствует ОК от Прохора</td>
+          </tr>
+          <tr>
+            <td class="pname">Стратегия АССИСТ+ (еженедельно)</td>
+            <td><span class="badge b-active">Регулярно</span></td>
+            <td class="col-plan"><ul class="li"><li>1 час стратегического планирования</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>—</li></ul></td>
+            <td class="col-next"><ul class="li"><li>1 ч стратегического планирования W17</li></ul></td>
+            <td class="col-goal">Стратегия развития АССИСТ+ сформирована</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎬 Медиа-проекты <span class="count">· 3 проекта + Антон Медиа</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>План W16</th>
+          <th>Факт W16</th>
+          <th>Задачи W17 (20–26 апр)</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Первые (ИРИ)</td>
+            <td><span class="badge b-wait">Ожидание ОС</span></td>
+            <td class="col-plan"><ul class="li"><li>Напомнить Марине</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Напомнили ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Повторное напоминание</li></ul></td>
+            <td class="col-goal">Получить ОС</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Теорема облаков / STEM</td>
+            <td><span class="badge b-wait">Ожидание ОС</span></td>
+            <td class="col-plan"><ul class="li"><li>Изучить, принять решение go/no-go</li></ul></td>
+            <td class="col-fact">—</td>
+            <td class="col-next"><ul class="li"><li>Изучить и отправить Лёше</li></ul></td>
+            <td class="col-goal">Go/no-go решение<br>При go → пре-продакшн</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Международный МФТИ</td>
+            <td><span class="badge b-research">Go/no-go</span></td>
+            <td class="col-plan">—</td>
+            <td class="col-fact">—</td>
+            <td class="col-next"><ul class="li"><li>Найти контакт потенциального участника и написать ему для проверки готовности к участию</li></ul></td>
+            <td class="col-goal">Решение принято<br>При go → запуск продакшна</td>
+          </tr>
+          <tr>
+            <td class="pname">Антон Медиа ТГК → Инстаграм</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>~10 постов из ТГК в Инстаграм за неделю</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Посты публикуются</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Опубликовать оставшиеся посты</li></ul></td>
+            <td class="col-goal">60 постов в Инстаграм за период</td>
+          </tr>
+          <tr class="row-warn">
+            <td class="pname">Корректировки по итогам Прохора</td>
+            <td><span class="badge b-kp">До 30.04</span></td>
+            <td class="col-plan"><ul class="li"><li>—</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Задача после созвона с Прохором</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Внести корректировки Медиа</li><li><span class="em-amber">Дедлайн: 30.04</span></li></ul></td>
+            <td class="col-goal">Медиа соответствует ОК от Прохора</td>
+          </tr>
+          <tr>
+            <td class="pname">Выбор направления для ОК от Прохора</td>
+            <td><span class="badge b-kp">До 30.04</span></td>
+            <td class="col-plan"><ul class="li"><li>—</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Задача поставлена после Прохора</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Выбрать 1 направление</li><li>Проработать детально для ОК</li></ul></td>
+            <td class="col-goal">ОК по 1 направлению готово к 30.04</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">⚙️ Внутренняя оптимизация <span class="count">· Notion · Zoom-обучение · Финансы</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>План W16</th>
+          <th>Факт W16</th>
+          <th>Задачи W17 (20–26 апр)</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr class="row-done">
+            <td class="pname">Notion — система управления проектами</td>
+            <td><span class="badge b-done">Внедрена</span></td>
+            <td class="col-plan"><ul class="li"><li>Структурировать проекты и задачи</li></ul></td>
+            <td class="col-fact"><ul class="li">
+              <li>Все направления структурированы ✓</li>
+              <li>Цели месяца по всем направлениям ✓</li>
+              <li>Виды по направлениям и месяцам ✓</li>
+              <li>Партнёрка: 7 целей + все задачи слинкованы ✓</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Поддержание и актуализация</li></ul></td>
+            <td class="col-goal"><span class="em-green">Notion внедрён ✓</span><br>Трекинг план/факт работает</td>
+          </tr>
+          <tr class="row-done">
+            <td class="pname">Zoom-обучение команды #1</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>1-й еженедельный Zoom команды</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Проведён 20.04 ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Zoom #2 — до 27.04</li></ul></td>
+            <td class="col-goal">2 Zoom-встречи команды за апрель</td>
+          </tr>
+          <tr>
+            <td class="pname">Финансы — Google Таблица P&amp;L</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan">—</td>
+            <td class="col-fact">—</td>
+            <td class="col-next"><ul class="li"><li>Создать таблицу P&amp;L по направлениям</li><li>Внести текущие оплаты</li></ul></td>
+            <td class="col-goal">P&amp;L готов<br>Рентабельность по проектам</td>
+          </tr>
+          <tr>
+            <td class="pname">Zoom с Викой/Димой</td>
+            <td><span class="badge b-active">До 26.04</span></td>
+            <td class="col-plan"><ul class="li"><li>—</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Запланировано</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести Zoom (дедлайн 26.04)</li><li>Повестка: Claude · общий бизнес · ИИ-контент</li></ul></td>
+            <td class="col-goal">Zoom проведён<br>Стратегия совместного бизнеса намечена</td>
+          </tr>
+          <tr>
+            <td class="pname">Оператор персданных</td>
+            <td><span class="badge b-wait">В процессе</span></td>
+            <td class="col-plan"><ul class="li"><li>Zoom-консультация с Прохором</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Консультация проведена ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Внести корректировки в проекты</li><li>Выбрать одно направление для детальной проработки</li></ul></td>
+            <td class="col-goal">Внесены корректировки<br>Выбрано 1 направление</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <a class="open-btn" href="2026-W16_13-19apr.html" target="_blank">↗ Открыть полный отчёт W16</a>
+  </div>
+
+
+  <!-- ══════ W17 (активная) ══════ -->
+  <div class="week-content active" id="tab-w17">
+
+    <div class="direction">
+      <div class="section-label">💻 IT-проекты <span class="count">· KPI: 10 новых встреч/мес</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>План W17 (20–26 апр)</th>
+          <th>Факт W17</th>
+          <th>Задачи W18 (28 апр–2 мая)</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">ГлобалДент</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Согласовать 1 этап</li><li>Подписать 2 этап, начать разработку</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Звонок запланирован на пн 29.04 10:00</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Вт 10:00 — провести звонок</li><li>Подписать 2 этап</li></ul></td>
+            <td class="col-goal">1 этап закрыт<br>2 этап подписан<br>+350К · поддержка 11–35К/мес</td>
+          </tr>
+          <tr>
+            <td class="pname">Evraz</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-plan"><ul class="li"><li>Напомнить / получить ОС</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Напомнили, получили ОС</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить в пн ✓</li></ul></td>
+            <td class="col-goal">Подписание контракта<br>по 1 направлению</td>
+          </tr>
+          <tr>
+            <td class="pname">Этажи</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-plan"><ul class="li"><li>Напомнить / получить ОС</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Напомнили, напомнить на неделе повторно</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Ещё раз в пн ✓</li><li>Напомнить на неделе</li></ul></td>
+            <td class="col-goal">Подписание контракта<br>по 1 направлению</td>
+          </tr>
+          <tr>
+            <td class="pname">Hantico</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Подобрать специалистов</li><li>Подготовить предложение</li><li>Провести консультацию</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Предложение обсуждено с Витей</li><li>Правки внесены (23–24.04)</li><li>Синхро с Маргаритой 25.04</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести консультацию ✓</li><li>Получить ОС по документу</li><li>Согласовать дискавери-звонок</li></ul></td>
+            <td class="col-goal">Консультация → КП →<br>подписание по 1 направлению</td>
+          </tr>
+          <tr>
+            <td class="pname">Лирика (Алексей)</td>
+            <td><span class="badge b-pause">Пауза ~1 мес</span></td>
+            <td class="col-plan"><ul class="li"><li>ОС от Алексея</li><li>Согласовать бюджет</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>ОС получена: проект на обсуждении</li><li>Нужен ~ещё 1 месяц</li><li>Ждём доп. ОС от Марины</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Вернуться с вопросом к Алексею на неделе</li></ul></td>
+            <td class="col-goal">50% аванс получен<br>Разработка стартовала</td>
+          </tr>
+          <tr>
+            <td class="pname">Краудфандинг (Алексей)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Провести Zoom</li><li>КП до 30.04</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Зум проведён ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить в ср</li><li>Получить ТЗ от Алексея</li><li>Подготовить КП</li></ul></td>
+            <td class="col-goal">КП отправлено<br>Цель: 2 000 000 ₽</td>
+          </tr>
+          <tr>
+            <td class="pname">Лига плюща (ФизтехСоюз)</td>
+            <td><span class="badge b-wait">Ожидание Антона</span></td>
+            <td class="col-plan"><ul class="li"><li>Изучить и отправить Лёше</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Ждёт изучения от Антона</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Изучить, отправить Лёше</li></ul></td>
+            <td class="col-goal">ОС Антона получена<br>3-мес цель: 1М+ ₽</td>
+          </tr>
+          <tr>
+            <td class="pname">Донат-платформа (ФизтехСоюз)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>ОС от Лёши по юрмодели</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Ответы на вопросы юристу готовы ✓</li><li>Отправлено Вике 25.04 ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Готовность 1 этапа</li></ul></td>
+            <td class="col-goal">Подтверждение концепции<br>+ договор</td>
+          </tr>
+          <tr>
+            <td class="pname">Новые контакты</td>
+            <td><span class="badge b-pause">На стопе</span></td>
+            <td class="col-plan"><ul class="li"><li>2–3 новых контакта</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>На стопе — сознательное решение</li></ul></td>
+            <td class="col-next"><ul class="li"><li>1–3.05: круг Данбара + план коммуникации</li><li>9–24.05: серия звонков</li></ul></td>
+            <td class="col-goal">5 контактов за апрель<br>→ перенос на май</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🧠 AI-обучение <span class="count">· курс ИИ для бизнеса · курс Cursor · партнёрка</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>План W17</th>
+          <th>Факт W17</th>
+          <th>Задачи W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Курс ИИ для бизнеса</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Программа курса</li><li>Тест-драйв на предпринимателе</li><li>Сайт для курса</li></ul></td>
+            <td class="col-fact"><ul class="li">
+              <li>Найти 10 человек в ближнем круге для продажи курса по 20к</li>
+              <li>Упаковать структуру и программу курса</li>
+              <li>Кастдевы — 2</li>
+              <li>Оцифровка сколковских курсов + полностью стартап-модуль</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Уточняется</li></ul></td>
+            <td class="col-goal"><span class="em-amber">100 000 ₽</span> с продаж курса</td>
+          </tr>
+          <tr>
+            <td class="pname">Курс Cursor</td>
+            <td><span class="badge b-active">Завершение</span></td>
+            <td class="col-plan"><ul class="li"><li>Питчинг проектов</li><li>Скинуть 8 модуль</li><li>Завершить курс</li></ul></td>
+            <td class="col-fact"><ul class="li">
+              <li>Питчинг проведён ✓ (Олеся)</li>
+              <li>8 модуль — Никита скинет 27.04</li>
+              <li>Форма ОС сделана ✓ (Олеся)</li>
+              <li>Кандидат в команду ✓</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Скинуть 8 модуль (27.04 Никита)</li><li>Завершить курс</li><li>Собрать финальную ОС</li></ul></td>
+            <td class="col-goal">1 человек в команду<br>1 выпущенный поток<br>ОС собрана</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎓 Наставничество <span class="count">· Олеся ответственная · дедлайн 30.04</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>План W17</th>
+          <th>Факт W17</th>
+          <th>Задачи W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Наставничество</td>
+            <td><span class="badge b-wait">Перенесён</span></td>
+            <td class="col-plan"><ul class="li"><li>Провести модуль</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Антон не смог — перенесено</li><li>Памятки по тайм-менеджменту сделаны ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести на этой неделе</li></ul></td>
+            <td class="col-goal">Получить продления</td>
+          </tr>
+          <tr>
+            <td class="pname">Корректировки по итогам Прохора</td>
+            <td><span class="badge b-wait">До 30.04</span></td>
+            <td class="col-plan"><ul class="li"><li>Внести корректировки</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Юр документы доделаны ✓ (Олеся, отправит Вике 25.04)</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить ОК от юриста и обновить</li></ul></td>
+            <td class="col-goal">Наставничество соответствует ОК от Прохора</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤝 Сообщество АССИСТ+ <span class="count">· SMM · Никита</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>План W17</th>
+          <th>Факт W17</th>
+          <th>Задачи W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Посты в ТГ (2/нед)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>2 поста за неделю</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Посты выложены ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>2 поста за W18</li></ul></td>
+            <td class="col-goal">2 поста/нед стабильно</td>
+          </tr>
+          <tr>
+            <td class="pname">Корректировки по итогам Прохора</td>
+            <td><span class="badge b-wait">До 30.04</span></td>
+            <td class="col-plan"><ul class="li"><li>Внести корректировки АССИСТ+</li></ul></td>
+            <td class="col-fact"><ul class="li">
+              <li>Удалили базу Airtable</li>
+              <li>Добавили чекбокс на assist-plus.site</li>
+              <li>Ревизия гугл-диска (все на яндексе)</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>—</li></ul></td>
+            <td class="col-goal">АССИСТ+ соответствует ОК от Прохора</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎬 Медиа-проекты <span class="count">· ИРИ · STEM · МФТИ · Антон Медиа</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>План W17</th>
+          <th>Факт W17</th>
+          <th>Задачи W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Первые (ИРИ)</td>
+            <td><span class="badge b-wait">Ожидание</span></td>
+            <td class="col-plan"><ul class="li"><li>Напомнить Марине</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>ОС от Марины: неактуально</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить ОС от Марины от Росмолодёжи</li></ul></td>
+            <td class="col-goal">Получить ОС</td>
+          </tr>
+          <tr>
+            <td class="pname">Теорема облаков / STEM</td>
+            <td><span class="badge b-wait">Ожидание ОС</span></td>
+            <td class="col-plan"><ul class="li"><li>Изучить, отправить Лёше</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Ждёт решения / изучения</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Изучить и отправить Лёше</li></ul></td>
+            <td class="col-goal">Go/no-go решение<br>При go → пре-продакшн</td>
+          </tr>
+          <tr>
+            <td class="pname">Международный МФТИ (Межфизтех)</td>
+            <td><span class="badge b-research">Go/no-go</span></td>
+            <td class="col-plan"><ul class="li"><li>Найти контакт, написать</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Пока нет прогресса</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить контакты потенциальных участников</li><li>Написать для проверки готовности</li></ul></td>
+            <td class="col-goal">Решение принято<br>При go → продакшн</td>
+          </tr>
+          <tr>
+            <td class="pname">Антон Медиа ТГ → Инстаграм</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Опубликовать оставшиеся посты</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Задача выполнена ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>—</li></ul></td>
+            <td class="col-goal">60 постов в Инстаграм за период</td>
+          </tr>
+          <tr>
+            <td class="pname">Корректировки Прохора (Медиа)</td>
+            <td><span class="badge b-wait">До 30.04</span></td>
+            <td class="col-plan"><ul class="li"><li>Внести корректировки</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>В процессе (Олеся)</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Внести корректировки</li></ul></td>
+            <td class="col-goal">Внести корректировки</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">⚙️ Внутренняя оптимизация <span class="count">· система · финансы · ПДн</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>План W17</th>
+          <th>Факт W17</th>
+          <th>Задачи W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Система управления проектами</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Поддержание Notion</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Инфраструктура готова (Маргарита): сервер + VS Code Remote</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Донастроить систему</li></ul></td>
+            <td class="col-goal">Трекинг план/факт работает без ручного ведения</td>
+          </tr>
+          <tr>
+            <td class="pname">Zoom команды</td>
+            <td><span class="badge b-active">Запланировано</span></td>
+            <td class="col-plan"><ul class="li"><li>Провести до 27.04</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Запланировано на пн 28.04 20:00</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести второй Zoom</li></ul></td>
+            <td class="col-goal">2 Zoom-встречи команды за апрель</td>
+          </tr>
+          <tr>
+            <td class="pname">Финансы P&amp;L Google Таблица</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-plan"><ul class="li"><li>Создать P&amp;L по направлениям</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Таблица от Антона получена</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Внедрить таблицу Антона в процессы</li><li>Внести текущие оплаты</li></ul></td>
+            <td class="col-goal">P&amp;L готов<br>Рентабельность по проектам</td>
+          </tr>
+          <tr>
+            <td class="pname">Zoom-архив на Google Drive</td>
+            <td><span class="badge b-done">Готово ✓</span></td>
+            <td class="col-plan"><ul class="li"><li>—</li></ul></td>
+            <td class="col-fact"><ul class="li"><li>Все Zoom-звонки загружены на Google Drive ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Настроить автозагрузку новых записей</li></ul></td>
+            <td class="col-goal">Архив звонков доступен команде</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">👩‍💻 Команда <span class="count">· итоги W17</span></div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W17</th>
+          <th>Задачи W18</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Маргарита</td>
+            <td><span class="badge b-done">4/5 ✓</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Agent teams внедрена ✓</li>
+              <li>Таск-трекер для моделей ✓</li>
+              <li>Hermes + сжатие сессий ✓</li>
+              <li>Инструкция VS Code Remote ✓</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Уточняются</li></ul></td>
+          </tr>
+          <tr>
+            <td class="pname">Олеся</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Питчинг проведён ✓</li>
+              <li>Памятки по тайм-менеджменту ✓</li>
+              <li>Юр документы по медиа и наставничеству проверяются (в процессе)</li>
+              <li>Презентация для вебинара дорабатывалась</li>
+              <li>Сайт для курса — задержался (нет Claude)</li>
+              <li>Модуль о проектах перенесён (Антон не смог)</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>—</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <a class="open-btn" href="2026-W17_20-26apr.html" target="_blank">↗ Открыть полный отчёт W17</a>
+  </div>
+
+
+  <!-- ══════ W18 (шаблон) ══════ -->
+  <div class="week-content" id="tab-w18">
+
+    <div class="direction">
+      <div class="section-label">💻 IT-проекты</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">ГлобалДент</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Звонок запланирован на пн 29.04 10:00</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Вт 10:00 — провести звонок</li><li>Подписать 2 этап</li></ul></td>
+            <td class="col-goal">1 этап закрыт<br>2 этап подписан<br>+350К · поддержка 11–35К/мес</td>
+          </tr>
+          <tr>
+            <td class="pname">Evraz</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-fact"><ul class="li"><li>Напомнили, получили ОС</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить в пн ✓</li></ul></td>
+            <td class="col-goal">Подписание контракта<br>по 1 направлению</td>
+          </tr>
+          <tr>
+            <td class="pname">Этажи</td>
+            <td><span class="badge b-kp">КП</span></td>
+            <td class="col-fact"><ul class="li"><li>Напомнили, напомнить на неделе повторно</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Ещё раз в пн ✓</li><li>Напомнить на неделе</li></ul></td>
+            <td class="col-goal">Подписание контракта<br>по 1 направлению</td>
+          </tr>
+          <tr>
+            <td class="pname">Hantico</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Предложение обсуждено с Витей</li><li>Правки внесены (23–24.04)</li><li>Синхро с Маргаритой 25.04</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести консультацию ✓</li><li>Получить ОС по документу</li><li>Согласовать дискавери-звонок</li></ul></td>
+            <td class="col-goal">Консультация → КП →<br>подписание по 1 направлению</td>
+          </tr>
+          <tr>
+            <td class="pname">Лирика (Алексей)</td>
+            <td><span class="badge b-pause">Пауза ~1 мес</span></td>
+            <td class="col-fact"><ul class="li"><li>ОС получена: проект на обсуждении ~ещё 1 месяц</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Вернуться с вопросом к Алексею на неделе</li></ul></td>
+            <td class="col-goal">50% аванс получен<br>Разработка стартовала</td>
+          </tr>
+          <tr>
+            <td class="pname">Краудфандинг (Алексей)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Зум проведён ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Напомнить в ср</li><li>Получить ТЗ от Алексея</li><li>Подготовить КП</li></ul></td>
+            <td class="col-goal">КП отправлено<br>Цель: 2 000 000 ₽</td>
+          </tr>
+          <tr>
+            <td class="pname">Донат-платформа (ФизтехСоюз)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Ответы юристу готовы ✓</li><li>Отправлено Вике 25.04 ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Готовность 1 этапа</li></ul></td>
+            <td class="col-goal">Подтверждение концепции<br>+ договор</td>
+          </tr>
+          <tr>
+            <td class="pname">Новые контакты</td>
+            <td><span class="badge b-pause">На стопе</span></td>
+            <td class="col-fact"><ul class="li"><li>На стопе — сознательное решение</li></ul></td>
+            <td class="col-next"><ul class="li"><li>1–3.05: круг Данбара + план коммуникации</li></ul></td>
+            <td class="col-goal">2–3 новых контакта</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🧠 AI-обучение</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Курс ИИ для бизнеса</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Найти 10 человек в ближнем круге для продажи курса по 20к</li>
+              <li>Упаковать структуру и программу курса</li>
+              <li>Кастдевы — 2</li>
+              <li>Оцифровка сколковских курсов + полностью стартап-модуль</li>
+            </ul></td>
+            <td class="col-next"><ul class="li">
+              <li>Пересборка вебинара для аудитории предпринимателей (Никита, 28.04 17:00)</li>
+              <li>Провести два веба для предпринимателей (Никита, до 02.05 20:00)</li>
+              <li>Собрать людей на веб 30.04 ~19:30 (Антон, до 30.04 15:00)</li>
+              <li>Создать платформу для курса, хранения записей и материалов (Никита + Маргарита, до 02.05)</li>
+              <li>Подготовить материалы и план презентации для 00 модуля (Гоша, до 29.04 20:00)</li>
+              <li>Создать чат и начать сопровождение клиентов (Никита, до 30.04 22:00)</li>
+              <li>Собрать потребность с предпринимателей после веба — рассылка + опрос, итог: документ (Никита + Антон, до 02.05 20:00)</li>
+              <li>Оцифровка курса Сколково — с прошлой недели (Гоша, до 30.04 20:00)</li>
+              <li>Изучение нагетс комьюнити: структура, занятия, продвижение + оцифровка (Гоша, до 30.04 20:00)</li>
+            </ul></td>
+            <td class="col-goal"><span class="em-amber">100 000 ₽</span> с продаж курса</td>
+          </tr>
+          <tr>
+            <td class="pname">Курс Cursor</td>
+            <td><span class="badge b-active">Завершение</span></td>
+            <td class="col-fact"><ul class="li">
+              <li>Питчинг проведён ✓ (Олеся)</li>
+              <li>8 модуль — Никита скинет 27.04</li>
+              <li>Форма ОС сделана ✓ (Олеся)</li>
+              <li>Кандидат в команду ✓</li>
+            </ul></td>
+            <td class="col-next"><ul class="li"><li>Скинуть 8 модуль (27.04 Никита)</li><li>Завершить курс</li><li>Собрать финальную ОС</li></ul></td>
+            <td class="col-goal">1 человек в команду<br>1 выпущенный поток<br>ОС собрана</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎓 Наставничество</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Наставничество</td>
+            <td><span class="badge b-wait">Перенесён</span></td>
+            <td class="col-fact"><ul class="li"><li>Антон не смог — перенесено</li><li>Памятки по тайм-менеджменту сделаны ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести на этой неделе</li></ul></td>
+            <td class="col-goal">Получить продления</td>
+          </tr>
+          <tr>
+            <td class="pname">Корректировки по итогам Прохора</td>
+            <td><span class="badge b-wait">До 30.04</span></td>
+            <td class="col-fact"><ul class="li"><li>Юр документы доделаны ✓ (Олеся, отправит Вике 25.04)</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить ОК от юриста и обновить</li></ul></td>
+            <td class="col-goal">Наставничество соответствует ОК от Прохора</td>
+          </tr>
+          <tr>
+            <td class="pname">Новые контакты</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>1–3.05: круг Данбара + план коммуникации</li></ul></td>
+            <td class="col-goal">2–3 новых контакта</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤝 Сообщество АССИСТ+</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Посты в ТГ (2/нед)</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Посты выложены ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>2 поста за W18</li></ul></td>
+            <td class="col-goal">2 поста/нед стабильно</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🎬 Медиа</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Первые (ИРИ)</td>
+            <td><span class="badge b-wait">Ожидание</span></td>
+            <td class="col-fact"><ul class="li"><li>ОС от Марины: неактуально</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить ОС от Марины от Росмолодёжи</li></ul></td>
+            <td class="col-goal">Получить ОС</td>
+          </tr>
+          <tr>
+            <td class="pname">Теорема облаков / STEM</td>
+            <td><span class="badge b-wait">Ожидание ОС</span></td>
+            <td class="col-fact"><ul class="li"><li>Ждёт решения / изучения</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Изучить и отправить Лёше</li></ul></td>
+            <td class="col-goal">Go/no-go решение<br>При go → пре-продакшн</td>
+          </tr>
+          <tr>
+            <td class="pname">Международный МФТИ (Межфизтех)</td>
+            <td><span class="badge b-research">Go/no-go</span></td>
+            <td class="col-fact"><ul class="li"><li>Пока нет прогресса</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Получить контакты потенциальных участников</li><li>Написать для проверки готовности</li></ul></td>
+            <td class="col-goal">Решение принято<br>При go → продакшн</td>
+          </tr>
+          <tr>
+            <td class="pname">Антон Медиа Инстаграм</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Задача выполнена ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Обсудить ведение с Олесей и при согласии сформировать план ведения</li></ul></td>
+            <td class="col-goal">60 постов в Инстаграм за период</td>
+          </tr>
+          <tr>
+            <td class="pname">Корректировки Прохора (Медиа)</td>
+            <td><span class="badge b-wait">До 30.04</span></td>
+            <td class="col-fact"><ul class="li"><li>В процессе (Олеся)</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Внести корректировки</li></ul></td>
+            <td class="col-goal">Внести корректировки</td>
+          </tr>
+          <tr>
+            <td class="pname">Международный форум<br>для детских садов</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>Назначить зум</li></ul></td>
+            <td class="col-goal"></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">⚙️ Внутренняя оптимизация</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Система управления проектами</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Инфраструктура готова (Маргарита): сервер + VS Code Remote</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Донастроить систему</li></ul></td>
+            <td class="col-goal">Трекинг план/факт работает без ручного ведения</td>
+          </tr>
+          <tr>
+            <td class="pname">Zoom команды</td>
+            <td><span class="badge b-active">Запланировано</span></td>
+            <td class="col-fact"><ul class="li"><li>Запланировано на пн 28.04 20:00</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Провести второй Zoom</li></ul></td>
+            <td class="col-goal">2 Zoom-встречи команды за апрель</td>
+          </tr>
+          <tr>
+            <td class="pname">Финансы P&amp;L Google Таблица</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Таблица от Антона получена</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Внедрить таблицу Антона в процессы</li><li>Внести текущие оплаты</li></ul></td>
+            <td class="col-goal">P&amp;L готов<br>Рентабельность по проектам</td>
+          </tr>
+          <tr>
+            <td class="pname">Zoom-архив на Google Drive</td>
+            <td><span class="badge b-done">Готово ✓</span></td>
+            <td class="col-fact"><ul class="li"><li>Все Zoom-звонки загружены на Google Drive ✓</li></ul></td>
+            <td class="col-next"><ul class="li"><li>Настроить автозагрузку новых записей</li></ul></td>
+            <td class="col-goal">Архив звонков доступен команде</td>
+          </tr>
+          <tr>
+            <td class="pname">Зарубежные сервисы</td>
+            <td><span class="badge b-wait">Исследование</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>Найти решение как можно оплачивать зарубежные сервисы</li></ul></td>
+            <td class="col-goal">Решение найдено</td>
+          </tr>
+          <tr>
+            <td class="pname">Нейросеть Ghost<br>и подобные</td>
+            <td><span class="badge b-wait">Исследование</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>Разобраться в предложениях на рынке: подключение ИИ-базы к зумам</li></ul></td>
+            <td class="col-goal">Выбран инструмент</td>
+          </tr>
+          <tr>
+            <td class="pname">Гоша: интеграция<br>в систему</td>
+            <td><span class="badge b-wait">Решение</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>Определиться по Гоше: интеграция в общую систему или найти другого с курса</li></ul></td>
+            <td class="col-goal">Ответственный определён</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">🤝 Партнёрки</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Проект</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Школково<br>— промокоды</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>Проанализировать инфоповоды и составить план коммуникации для рекламы</li></ul></td>
+            <td class="col-goal"></td>
+          </tr>
+          <tr>
+            <td class="pname">Социальный капитал<br>— 10 гипотез</td>
+            <td><span class="badge b-wait">В работе</span></td>
+            <td class="col-fact"></td>
+            <td class="col-next"><ul class="li"><li>Сформировать 10 гипотез заработка на комиссионных</li></ul></td>
+            <td class="col-goal">10 гипотез готово</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="section-label">👩‍💻 Команда</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Задача</th><th>Статус</th>
+          <th>Факт W17 (перенесено)</th>
+          <th>План W18</th>
+          <th>Цель к 30.04</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="pname">Маргарита</td>
+            <td><span class="badge b-done">4/5 ✓</span></td>
+            <td class="col-fact"><ul class="li"><li>Agent teams внедрена ✓</li><li>Таск-трекер для моделей ✓</li><li>Hermes + сжатие сессий ✓</li><li>Инструкция VS Code Remote ✓</li></ul></td>
+            <td class="col-next"><span class="w18-empty">— будет заполнено после планёрки</span></td>
+            <td class="col-goal">—</td>
+          </tr>
+          <tr>
+            <td class="pname">Олеся</td>
+            <td><span class="badge b-active">В работе</span></td>
+            <td class="col-fact"><ul class="li"><li>Питчинг проведён ✓</li><li>Памятки по тайм-менеджменту ✓</li><li>Юр документы по медиа и наставничеству (в процессе)</li><li>Сайт для курса — задержался</li><li>Модуль о проектах перенесён</li></ul></td>
+            <td class="col-next"><span class="w18-empty">— будет заполнено после планёрки</span></td>
+            <td class="col-goal">—</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="footer">
+    Dashboard · обновлено 28.04.2026 · W17 активная · следующий отчёт W18 · 27 апр — 2 мая
+  </div>
+
+</div>
+
+<script>
+  function switchTab(week) {
+    document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.week-content').forEach(c => c.classList.remove('active'));
+
+    const tabs = document.querySelectorAll('.week-tab');
+    const map = { w14: 0, w15: 1, w16: 2, w17: 3, w18: 4 };
+    if (tabs[map[week]] && !tabs[map[week]].classList.contains('no-data')) {
+      tabs[map[week]].classList.add('active');
+    }
+
+    const content = document.getElementById('tab-' + week);
+    if (content) content.classList.add('active');
+  }
+</script>
+</body>
+</html>

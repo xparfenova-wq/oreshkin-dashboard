@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Команда Орешкин</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: #e2ddd8;
+    --accent: #7c3aed;
+    --accent2: #0891b2;
+    --accent3: #d97706;
+    --text: #1a1a2e;
+    --muted: #78716c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    width: 100%;
+    padding: 48px 24px;
+    text-align: center;
+  }
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 56px;
+  }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin-bottom: 56px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(124,58,237,0.12); border-color: var(--accent); }
+  .card:hover::before { transform: scaleX(1); }
+  .card.active { border-color: var(--accent); }
+  .card.active::before { transform: scaleX(1); }
+  .card-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .card-title .hi { color: var(--accent); }
+  .card.may .card-title .hi { color: var(--accent2); }
+  .card-desc {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .badge-current {
+    display: inline-block;
+    font-size: 7px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 2px 8px;
+    background: rgba(8,145,178,0.1);
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    margin-top: 12px;
+  }
+  .footer {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1><span class="highlight">Dashboard</span><br>Команда</h1>
+  <div class="subtitle">Еженедельный трекинг · факт / план / цель</div>
+  <div class="divider"></div>
+  <div class="cards">
+    <a class="card" href="2026-апрель-dashboard.html">
+      <div class="card-label">Архив</div>
+      <div class="card-title"><span class="hi">Апрель</span><br>2026</div>
+      <div class="card-desc">W14 — W18<br>27 марта — 2 мая</div>
+    </a>
+    <a class="card may active" href="2026-май-dashboard.html">
+      <div class="card-label">Текущий</div>
+      <div class="card-title"><span class="hi">Май</span><br>2026</div>
+      <div class="card-desc">W19 — W22<br>4 — 31 мая</div>
+      <div class="badge-current">● активный</div>
+    </a>
+  </div>
+  <div class="footer">Обновляется еженедельно · команда Антона Орешкина</div>
+</div>
+</body>
+</html>
