@@ -332,6 +332,41 @@
     transition: all 0.2s;
   }
   .back-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .container { padding: 24px 12px; }
+
+    .week-nav { gap: 6px; }
+    .week-tab { padding: 8px 12px; font-size: 8px; flex: 1; text-align: center; min-width: 60px; }
+    .week-tab .tab-dates { font-size: 7px; }
+
+    table { font-size: 10px; }
+    thead th { font-size: 7px; padding: 8px 10px; }
+    tbody td { padding: 10px 10px; }
+
+    .pname { font-size: 9px; min-width: 90px; white-space: normal; }
+    td.col-plan, td.col-fact, td.col-next { min-width: 120px; }
+    td.col-goal { min-width: 100px; }
+
+    .month-block { padding: 14px 12px; }
+    .progress-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .section-label { font-size: 9px; letter-spacing: 0.12em; }
+    .direction { margin-bottom: 28px; }
+
+    ul.li li { font-size: 10px; }
+    .badge { font-size: 7px; padding: 2px 6px; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 16px 10px; }
+    .week-tab { padding: 7px 8px; font-size: 7px; }
+    .week-tab .tab-dates { display: none; }
+    table { font-size: 9px; }
+    .pname { font-size: 8px; min-width: 70px; }
+    td.col-plan, td.col-fact, td.col-next { min-width: 100px; }
+    td.col-goal { display: none; }
+  }
 </style>
 </head>
 <body>
