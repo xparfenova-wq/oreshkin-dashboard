@@ -953,7 +953,14 @@
 
     const content = document.getElementById('tab-' + week);
     if (content) content.classList.add('active');
+
+    localStorage.setItem('activeWeek', week);
   }
+
+  (function () {
+    const saved = localStorage.getItem('activeWeek');
+    if (saved && saved !== 'w20') switchTab(saved);
+  })();
 </script>
 </body>
 </html>
