@@ -437,6 +437,77 @@
     position: relative;
     top: -4px;
   }
+
+  /* ── INNER TWO-COL GRID (used in costs / revenue) ── */
+  .inner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ══════════════════════════════════════════
+     RESPONSIVE — TABLET  ≤ 960px
+  ══════════════════════════════════════════ */
+  @media (max-width: 960px) {
+    .canvas-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    /* Kill row-span on tablet — cells stack naturally */
+    .cell-span2 { grid-row: auto; }
+
+    .pos-grid { grid-template-columns: 1fr 1fr; }
+    .questions-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ══════════════════════════════════════════
+     RESPONSIVE — MOBILE  ≤ 640px
+  ══════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    body::before { background-size: 24px 24px; }
+
+    .container { padding: 28px 14px 48px; }
+
+    /* Header */
+    .header-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .header-meta { text-align: left; }
+    h1 { font-size: 36px; }
+    .brand-icon { width: 28px; height: 28px; }
+
+    /* UVP banner */
+    .uvp-banner { padding: 16px 16px 16px 20px; }
+    .uvp-sub { font-size: 10px; line-height: 1.6; }
+
+    /* All grids → single column */
+    .canvas-grid,
+    .bottom-grid,
+    .pos-grid,
+    .questions-grid { grid-template-columns: 1fr; }
+
+    .cell-span2 { grid-row: auto; }
+
+    /* Inner two-col grids inside cells */
+    .inner-grid { grid-template-columns: 1fr; }
+
+    /* Cells */
+    .cell { padding: 16px 14px 14px; }
+
+    /* Metrics row */
+    .metric-row { gap: 6px; }
+    .metric-box { min-width: 0; padding: 10px 12px; }
+    .metric-box .mval { font-size: 28px; }
+
+    /* Positioning cards */
+    .pos-card { padding: 14px; }
+    .pos-card .pos-icon { font-size: 18px; margin-bottom: 6px; }
+
+    /* Typography tweaks */
+    ul.items li { font-size: 12px; }
+    ul.items li strong { font-size: 11px; }
+    ul.items li em { font-size: 11px; }
+
+    /* Footer */
+    .footer { font-size: 9px; }
+  }
 </style>
 </head>
 <body>
@@ -681,7 +752,7 @@
 
     <div class="cell cell-red" style="border-top-color:var(--red);">
       <div class="clabel"><span class="clabel-num">06</span> Структура затрат</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="inner-grid">
         <div>
           <div class="sub-label">Основные</div>
           <ul class="items">
@@ -717,7 +788,7 @@
 
     <div class="cell cell-green">
       <div class="clabel"><span class="clabel-num">07</span> Потоки выручки</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="inner-grid">
         <div>
           <div class="sub-label">Текущие</div>
           <ul class="items">
