@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synapt — Lean Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: #e2ddd8;
+    --accent: #7c3aed;
+    --accent2: #0891b2;
+    --accent3: #d97706;
+    --text: #1a1a2e;
+    --muted: #78716c;
+    --green: #059669;
+    --red: #dc2626;
+    --pink: #c026d3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+  }
+
+  /* ── HEADER ── */
+  .header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+  }
+
+  h1 .hl {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-meta {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .subtitle {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+    margin-bottom: 28px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin-bottom: 28px;
+  }
+
+  /* ── UVP BANNER ── */
+  .uvp-banner {
+    border: 1px solid var(--accent);
+    background: var(--surface);
+    padding: 20px 28px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .uvp-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+
+  .uvp-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .uvp-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(13px, 2vw, 18px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .uvp-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── CANVAS GRID ── */
+  .canvas-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1.3fr 1fr 1.1fr;
+    grid-template-rows: auto auto;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* ── CELL ── */
+  .cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 18px 16px;
+    position: relative;
+  }
+
+  .cell:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(124,58,237,0.12);
+  }
+
+  .cell-top { border-top: 2px solid var(--accent); }
+  .cell-green { border-top: 2px solid var(--green); }
+  .cell-blue { border-top: 2px solid var(--accent2); }
+  .cell-amber { border-top: 2px solid var(--accent3); }
+  .cell-pink { border-top: 2px solid var(--pink); }
+  .cell-red { border-top: 2px solid var(--red); }
+
+  .cell-span2 { grid-row: span 2; }
+
+  /* ── CELL LABEL ── */
+  .clabel {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .clabel-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* ── ITEMS LIST ── */
+  ul.items { list-style: none; padding: 0; }
+  ul.items li {
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--text);
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  ul.items li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--border);
+    font-size: 10px;
+  }
+  ul.items li strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    margin-bottom: 1px;
+    color: var(--text);
+  }
+  ul.items li em {
+    font-style: normal;
+    color: var(--muted);
+    font-size: 10px;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid;
+    font-weight: 700;
+    white-space: nowrap;
+    font-family: 'Unbounded', sans-serif;
+    border-radius: 2px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin: 2px 2px 2px 0;
+    cursor: default;
+  }
+  .badge:hover { transform: scale(1.07); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+  .b-accent  { border-color: var(--accent);  color: var(--accent);  background: rgba(124,58,237,0.05); }
+  .b-green   { border-color: var(--green);   color: var(--green);   background: rgba(5,150,105,0.05); }
+  .b-blue    { border-color: var(--accent2); color: var(--accent2); background: rgba(8,145,178,0.05); }
+  .b-amber   { border-color: var(--accent3); color: var(--accent3); background: rgba(217,119,6,0.05); }
+  .b-pink    { border-color: var(--pink);    color: var(--pink);    background: rgba(192,38,211,0.05); }
+  .b-red     { border-color: var(--red);     color: var(--red);     background: rgba(220,38,38,0.05); }
+  .b-muted   { border-color: var(--border);  color: var(--muted);   background: transparent; }
+  .b-fill-accent { border-color: var(--accent); color: #fff; background: var(--accent); }
+  .b-fill-green  { border-color: var(--green);  color: #fff; background: var(--green); }
+
+  /* ── DIVIDER IN CELL ── */
+  .cell-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 0;
+  }
+
+  .sub-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 10px 0 6px;
+  }
+
+  /* ── METRIC BOX ── */
+  .metric-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .metric-box {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    flex: 1;
+    min-width: 80px;
+    background: var(--bg);
+    transition: border-color 0.15s;
+  }
+  .metric-box:hover { border-color: var(--accent); }
+
+  .metric-box .mval {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  .metric-box .mval.green { color: var(--green); }
+  .metric-box .mval.blue  { color: var(--accent2); }
+  .metric-box .mval.amber { color: var(--accent3); }
+
+  .metric-box .mlabel {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  /* ── POSITIONING CARDS ── */
+  .pos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .pos-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+    transition: border-color 0.15s, transform 0.15s;
+    cursor: default;
+  }
+  .pos-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .pos-card .pos-icon {
+    font-size: 20px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .pos-card .pos-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .pos-card p {
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  /* ── OPEN QUESTIONS ── */
+  .questions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--accent3);
+    border-top: 2px solid var(--accent3);
+    padding: 14px 16px;
+    cursor: default;
+    transition: box-shadow 0.15s;
+  }
+  .q-card:hover { box-shadow: 0 2px 12px rgba(217,119,6,0.12); }
+
+  .q-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 6px;
+  }
+
+  .q-card p {
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    min-width: 20px;
+  }
+
+  /* ── EM ── */
+  .em-green  { color: var(--green);   font-weight: 700; }
+  .em-blue   { color: var(--accent2); font-weight: 700; }
+  .em-accent { color: var(--accent);  font-weight: 700; }
+  .em-amber  { color: var(--accent3); font-weight: 700; }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 36px;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  /* ── SYNAPSE SVG ICON ── */
+  .brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-right: 6px;
+    position: relative;
+    top: -4px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header-row">
+    <div>
+      <h1>
+        <svg class="brand-icon" viewBox="0 0 36 36" fill="none">
+          <circle cx="8" cy="18" r="4.5" fill="white" opacity="0.9"/>
+          <circle cx="28" cy="18" r="4.5" fill="white" opacity="0.9"/>
+          <circle cx="18" cy="8"  r="3.5" fill="white" opacity="0.6"/>
+          <circle cx="18" cy="28" r="3.5" fill="white" opacity="0.6"/>
+          <line x1="12.5" y1="18" x2="23.5" y2="18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="18" y1="11.5" x2="18" y2="24.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+          <circle cx="18" cy="18" r="2.5" fill="white"/>
+        </svg><span class="hl">Synapt</span>
+      </h1>
+      <div class="subtitle">AI&IT Agency · Lean Canvas · Май 2026</div>
+    </div>
+    <div class="header-meta">
+      Внутренний документ<br>
+      Для команды<br>
+      <span style="color:var(--accent);">v1.0</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- UVP BANNER -->
+  <div class="uvp-banner">
+    <div class="uvp-label">04 · Уникальное ценностное предложение</div>
+    <div class="uvp-text">
+      Соединяем бизнес-боль и AI-решение.<br>
+      От постановки задачи до работающего продукта — за 4–8 недель
+    </div>
+    <div class="uvp-sub">
+      Пул проверенных исполнителей · Понимание бизнеса изнутри · Честная экспертиза · Сопровождение включено
+    </div>
+  </div>
+
+  <!-- MAIN CANVAS GRID -->
+  <div class="canvas-grid">
+
+    <!-- PROBLEM + ALTERNATIVES (span 2 rows) -->
+    <div class="cell cell-red cell-span2">
+      <div class="clabel"><span class="clabel-num">01</span> Проблема</div>
+      <ul class="items">
+        <li>
+          <strong>Не знают, с чего начать</strong>
+          <em>AI везде — но непонятно, какой сценарий даст реальный ROI именно у нас</em>
+        </li>
+        <li>
+          <strong>Обожглись на подрядчиках</strong>
+          <em>Голосовой агент в проде сломал 2 000 карточек. Обещали — не сделали</em>
+        </li>
+        <li>
+          <strong>Нет ресурсов строить внутри</strong>
+          <em>AI-инженер = найм + онбординг + удержание. Дорого, долго, рискованно</em>
+        </li>
+        <li>
+          <strong>Разрозненные системы</strong>
+          <em>3 отдельных решения вместо одного — дублирование, потеря контекста</em>
+        </li>
+        <li>
+          <strong>Нет измеримого ROI</strong>
+          <em>Руководству нужны цифры, не «внедрили AI»</em>
+        </li>
+      </ul>
+
+      <div class="cell-divider"></div>
+      <div class="sub-label">Существующие альтернативы</div>
+      <ul class="items">
+        <li><em>Крупные агентства — дорого, медленно, не понимают специфику</em></li>
+        <li><em>Фриланс — нет системности и ответственности</em></li>
+        <li><em>Готовый SaaS — не кастомный, не закрывает специфику</em></li>
+        <li><em>Строить внутри — 6–12 мес + риск потери сотрудника</em></li>
+      </ul>
+    </div>
+
+    <!-- SOLUTION -->
+    <div class="cell cell-green">
+      <div class="clabel"><span class="clabel-num">03</span> Решение</div>
+      <ul class="items">
+        <li>
+          <strong>Диагностика → конкретный сценарий</strong>
+          <em>Одна встреча — точка входа с понятным ROI</em>
+        </li>
+        <li>
+          <strong>Пилот за 4–8 недель</strong>
+          <em>MVP с измеримым результатом до основного контракта</em>
+        </li>
+        <li>
+          <strong>Пул исполнителей под задачу</strong>
+          <em>AI-автоматизация, архитектура, full-stack, RAG — выбираем лучшего</em>
+        </li>
+        <li>
+          <strong>Сопровождение 1–3 мес включено</strong>
+          <em>Правки и доработки без допзатрат</em>
+        </li>
+      </ul>
+    </div>
+
+    <!-- UVP CENTER (empty, already in banner, use for concept) -->
+    <div class="cell cell-top" style="border-top-color:var(--accent);">
+      <div class="clabel"><span class="clabel-num">04</span> Концепция</div>
+      <div style="font-family:'Unbounded',sans-serif; font-size:11px; font-weight:700; color:var(--accent); line-height:1.5; margin-bottom:12px; letter-spacing:-0.01em;">
+        «McKinsey для AI —<br>доступный и честный»
+      </div>
+      <div style="font-size:10px; color:var(--muted); line-height:1.7;">
+        <span class="em-accent">Синапс</span> между бизнесом и технологиями.<br>
+        Точка соединения и передачи сигнала —<br>
+        как в нейронных сетях, на которых построен AI
+      </div>
+      <div class="cell-divider"></div>
+      <div class="badge b-fill-accent" style="margin-top:2px;">Один фундамент → несколько кейсов</div>
+    </div>
+
+    <!-- UNFAIR ADVANTAGE -->
+    <div class="cell cell-pink">
+      <div class="clabel"><span class="clabel-num">09</span> Несправедливое преимущество</div>
+      <ul class="items">
+        <li>
+          <strong>Нетворк Антона</strong>
+          <em>Сколково, МФТИ, Прорыв — прямой выход на ЛПР корпораций</em>
+        </li>
+        <li>
+          <strong>АССИСТ+ как лидген</strong>
+          <em>HR-клиент → доверие → IT/AI-проект через тёплые связи</em>
+        </li>
+        <li>
+          <strong>Не один исполнитель</strong>
+          <em>Пул: AI-спец + архитектор + внешние — не ограничены одной экспертизой</em>
+        </li>
+        <li>
+          <strong>Живые кейсы уже есть</strong>
+          <em>GlobalDent, Хантико, ЕВРАЗ, Лирика — работающее портфолио</em>
+        </li>
+      </ul>
+    </div>
+
+    <!-- CUSTOMER SEGMENTS (span 2 rows) -->
+    <div class="cell cell-amber cell-span2">
+      <div class="clabel"><span class="clabel-num">02</span> Сегменты клиентов</div>
+
+      <div class="badge b-red">B2B средний бизнес</div>
+      <div style="height:6px;"></div>
+      <ul class="items">
+        <li><em>SaaS-платформы — AI в поддержке и онбординге (Хантико)</em></li>
+        <li><em>Медицина, право, образование — базы знаний + RAG (GlobalDent)</em></li>
+        <li><em>EdTech — AI-first разработка (SHKOLA.APP)</em></li>
+      </ul>
+
+      <div class="cell-divider"></div>
+      <div class="badge b-accent">Корпоративный сектор</div>
+      <div style="height:6px;"></div>
+      <ul class="items">
+        <li><em>Промышленность — AI-двойники экспертов (ЕВРАЗ)</em></li>
+        <li><em>Банки, финтех — автоматизация аналитики</em></li>
+      </ul>
+
+      <div class="cell-divider"></div>
+      <div class="badge b-amber">Стартапы / новые продукты</div>
+      <div style="height:6px;"></div>
+      <ul class="items">
+        <li><em>MVP и платформы через нетворк (Лирика, Лига Плюща)</em></li>
+        <li><em>Community, краудфандинг, donaton (Физтех)</em></li>
+      </ul>
+
+      <div class="cell-divider"></div>
+      <div class="sub-label">Ранние адопторы</div>
+      <ul class="items">
+        <li><em>Нетворк Сколково / МФТИ — тёплые введения</em></li>
+        <li><em>Клиенты АССИСТ+ — уже есть доверие</em></li>
+        <li><em>Рефераллы через партнёров (Алексей и др.)</em></li>
+      </ul>
+
+      <div class="cell-divider"></div>
+      <div class="sub-label">Текущие проекты</div>
+      <div>
+        <span class="badge b-blue">Хантико</span>
+        <span class="badge b-green">GlobalDent</span>
+        <span class="badge b-accent">ЕВРАЗ</span>
+        <span class="badge b-amber">SHKOLA.APP</span>
+        <span class="badge b-pink">Лирика</span>
+        <span class="badge b-muted">Лига Плюща</span>
+        <span class="badge b-muted">Донат-платформа</span>
+      </div>
+    </div>
+
+    <!-- KEY METRICS -->
+    <div class="cell cell-blue">
+      <div class="clabel"><span class="clabel-num">08</span> Ключевые метрики</div>
+      <div class="metric-row">
+        <div class="metric-box">
+          <div class="mval">30%</div>
+          <div class="mlabel">агентских от<br>стоимости проекта</div>
+        </div>
+        <div class="metric-box">
+          <div class="mval green">5+</div>
+          <div class="mlabel">цель: активных<br>клиентов</div>
+        </div>
+      </div>
+      <ul class="items">
+        <li><em>Конверсия встреча → договор</em></li>
+        <li><em>Средний чек проекта</em></li>
+        <li><em>Агентская выручка / мес</em></li>
+        <li><em>NPS + повторные обращения</em></li>
+        <li><em>Время встреча → старт</em></li>
+      </ul>
+    </div>
+
+    <!-- CHANNELS -->
+    <div class="cell cell-blue" style="border-top-color:var(--accent2);">
+      <div class="clabel"><span class="clabel-num">05</span> Каналы</div>
+      <ul class="items">
+        <li>
+          <strong>Личный нетворк</strong>
+          <em>Сколково, МФТИ, клуб Прорыв — прямые введения к ЛПР</em>
+        </li>
+        <li>
+          <strong>АССИСТ+ cross-sell</strong>
+          <em>HR-клиент → тёплый переход в IT/AI</em>
+        </li>
+        <li>
+          <strong>Кейсы и демо</strong>
+          <em>GlobalDent, Хантико — рабочие референсы для новых</em>
+        </li>
+        <li>
+          <strong>Рефераллы партнёров</strong>
+          <em>Алексей и др. как источник входящих проектов</em>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+  <!-- END MAIN GRID -->
+
+  <!-- BOTTOM GRID: COSTS + REVENUE -->
+  <div class="bottom-grid">
+
+    <div class="cell cell-red" style="border-top-color:var(--red);">
+      <div class="clabel"><span class="clabel-num">06</span> Структура затрат</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div>
+          <div class="sub-label">Основные</div>
+          <ul class="items">
+            <li>
+              <strong><span class="em-red">~70%</span> от суммы проекта</strong>
+              <em>Вознаграждение исполнителей (пул: Витя, Кирилл, внешние)</em>
+            </li>
+            <li>
+              <strong>LLM API + инфраструктура</strong>
+              <em>OpenAI, Anthropic, Groq · TimeWeb, Selectel, Hostinger</em>
+            </li>
+            <li>
+              <strong>Пресейл и управление</strong>
+              <em>Время Антона на переговоры и контроль качества</em>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div class="sub-label">Операционные</div>
+          <ul class="items">
+            <li><em>Корпоративные подписки: Claude, Codex, N8N</em></li>
+            <li><em>Инструменты разработки и тестирования</em></li>
+            <li><em>Юридическое оформление (договоры с ИП)</em></li>
+          </ul>
+          <div class="sub-label" style="margin-top:10px;">Риски</div>
+          <ul class="items">
+            <li><em>Зависимость от исполнителей → диверсификация пула</em></li>
+            <li><em>Нестабильность LLM-провайдеров → резервные модели</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="cell cell-green">
+      <div class="clabel"><span class="clabel-num">07</span> Потоки выручки</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div>
+          <div class="sub-label">Текущие</div>
+          <ul class="items">
+            <li>
+              <strong><span class="em-accent">30% агентских</span> от проекта</strong>
+              <em>Лирика: ~500–600 тыс. руб. · GlobalDent эт.2 · Хантико</em>
+            </li>
+            <li>
+              <strong>Консалтинг / первичный аудит</strong>
+              <em>Встреча → быстрый анализ → точка входа</em>
+            </li>
+          </ul>
+          <div class="sub-label" style="margin-top:10px;">Модель оплаты</div>
+          <ul class="items">
+            <li><em>70% предоплата + 30% по сдаче</em></li>
+            <li><em>Этапное финансирование на крупных проектах</em></li>
+          </ul>
+        </div>
+        <div>
+          <div class="sub-label">Потенциальные</div>
+          <ul class="items">
+            <li>
+              <strong><span class="em-green">Ретейнер</span> — сопровождение</strong>
+              <em>Месячная подписка после MVP-сдачи</em>
+            </li>
+            <li>
+              <strong>AI-воркшоп / обучение команды</strong>
+              <em>SHKOLA.APP как первый пилот формата</em>
+            </li>
+            <li>
+              <strong>Продуктизация по вертикалям</strong>
+              <em>RAG-ассистент для медицины, дентал-клиник</em>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- END BOTTOM GRID -->
+
+  <!-- POSITIONING SECTION -->
+  <div class="section-label">Почему именно мы — позиционирование</div>
+
+  <div class="pos-grid">
+    <div class="pos-card">
+      <span class="pos-icon">🧠</span>
+      <div class="pos-title">Бизнес-логика прежде кода</div>
+      <p>Сначала диагностика боли и выбор сценария — потом разработка. Не «AI вообще», а конкретный ROI</p>
+    </div>
+    <div class="pos-card">
+      <span class="pos-icon">🔄</span>
+      <div class="pos-title">Гибкий пул, не один человек</div>
+      <p>AI-автоматизация, архитектура, full-stack — подбираем лучшего под задачу. Не ограничены одной экспертизой</p>
+    </div>
+    <div class="pos-card">
+      <span class="pos-icon">🤝</span>
+      <div class="pos-title">Честность как преимущество</div>
+      <p>Скажем, когда голосовой агент в РФ не готов к проду. Клиент не обожжётся — вернётся снова</p>
+    </div>
+    <div class="pos-card">
+      <span class="pos-icon">⚡</span>
+      <div class="pos-title">Скорость без потери качества</div>
+      <p>4–8 недель до первого результата. Spec-driven: сначала спека, потом агент — не «вайб-кодинг»</p>
+    </div>
+  </div>
+
+  <!-- OPEN QUESTIONS -->
+  <div class="section-label">Открытые вопросы — что нужно проверить</div>
+
+  <div class="questions-grid">
+    <div class="q-card">
+      <div class="q-title">Модель и ценообразование</div>
+      <p>Только 30% агентских или нужен ретейнер? Как считать стоимость первичного аудита? Есть ли порог входа?</p>
+    </div>
+    <div class="q-card">
+      <div class="q-title">Пул исполнителей</div>
+      <p>Кто ещё кроме Вити и Кирилла? Как вводить новых? Как управлять качеством при разных людях?</p>
+    </div>
+    <div class="q-card">
+      <div class="q-title">Масштабирование</div>
+      <p>Как систематизировать продажи? Когда нужен сайт/бренд Synapt? Как делать проекты повторяемо?</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    Synapt · Lean Canvas v1.0 · Май 2026 · Внутренний документ<br>
+    Синапс — точка соединения бизнеса и технологий
+  </div>
+
+</div>
+</body>
+</html>
