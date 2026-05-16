@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Automy AI — Lean Canvas</title>
+<title>Synapt — Lean Canvas</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -248,7 +248,6 @@
   .b-pink   { border-color: var(--pink);    color: var(--pink);    background: rgba(192,38,211,0.05); }
   .b-red    { border-color: var(--red);     color: var(--red);     background: rgba(220,38,38,0.05); }
   .b-muted  { border-color: var(--border);  color: var(--muted);   background: transparent; }
-  .b-fill-accent { border-color: var(--accent); color: #fff; background: var(--accent); }
 
   .cell-divider {
     height: 1px;
@@ -435,12 +434,26 @@
     <div>
       <h1>
         <svg class="brand-icon" viewBox="0 0 36 36" fill="none">
-          <path d="M27 9 A12 12 0 1 0 29 21" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.9"/>
-          <path d="M24.5 6 L27.5 9.5 L24.5 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
-          <circle cx="18" cy="18" r="3" fill="white"/>
-        </svg><span class="hl">Automy AI</span>
+          <!-- Central node -->
+          <circle cx="18" cy="18" r="4.5" fill="white"/>
+          <!-- Axons / dendrites -->
+          <line x1="18" y1="13.5" x2="18" y2="5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>
+          <line x1="18" y1="22.5" x2="18" y2="31" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>
+          <line x1="13.5" y1="18" x2="5" y2="18" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>
+          <line x1="22.5" y1="18" x2="31" y2="18" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>
+          <!-- Diagonal connections -->
+          <line x1="15" y1="15" x2="9" y2="9" stroke="white" stroke-width="1" stroke-linecap="round" opacity="0.45"/>
+          <line x1="21" y1="15" x2="27" y2="9" stroke="white" stroke-width="1" stroke-linecap="round" opacity="0.45"/>
+          <line x1="15" y1="21" x2="9" y2="27" stroke="white" stroke-width="1" stroke-linecap="round" opacity="0.45"/>
+          <line x1="21" y1="21" x2="27" y2="27" stroke="white" stroke-width="1" stroke-linecap="round" opacity="0.45"/>
+          <!-- Terminal nodes -->
+          <circle cx="18" cy="5" r="1.8" fill="white" opacity="0.6"/>
+          <circle cx="18" cy="31" r="1.8" fill="white" opacity="0.6"/>
+          <circle cx="5" cy="18" r="1.8" fill="white" opacity="0.6"/>
+          <circle cx="31" cy="18" r="1.8" fill="white" opacity="0.6"/>
+        </svg><span class="hl">Synapt</span>
       </h1>
-      <div class="subtitle">AI Automation Agency · Lean Canvas · Май 2026</div>
+      <div class="subtitle">AI Agency · Lean Canvas · Май 2026</div>
     </div>
     <div class="header-meta">
       Внутренний документ<br>
@@ -529,17 +542,18 @@
     <div class="cell cell-top">
       <div class="clabel"><span class="clabel-num">04</span> Концепция</div>
       <div style="font-family:'Unbounded',sans-serif; font-size:11px; font-weight:700; color:var(--accent); line-height:1.5; margin-bottom:14px; letter-spacing:-0.01em;">
-        Автопилот для бизнеса
+        Точка соединения
       </div>
       <div style="font-size:10px; color:var(--muted); line-height:1.8;">
-        <span class="em-accent">Auto</span> — строим процессы так, чтобы они работали стабильно без постоянного ручного контроля<br><br>
-        <span class="em-accent">My</span> — изучаем конкретный бизнес, его данные и задачи, потом проектируем под него
+        Синапс — место, где нейроны передают сигнал друг другу. Synapt — точка, где задача бизнеса превращается в работающую AI-систему<br><br>
+        <span class="em-accent">Syn</span> — соединяем бизнес с нужной технологией и командой<br>
+        <span class="em-accent">Apt</span> — подбираем то, что подходит именно этой задаче, а не универсальное решение
       </div>
     </div>
 
     <!-- 09 ADVANTAGE -->
     <div class="cell cell-pink">
-      <div class="clabel"><span class="clabel-num">09</span> Преимущества</div>
+      <div class="clabel"><span class="clabel-num">09</span> Несправедливое преимущество</div>
       <ul class="items">
         <li>
           <strong>Гарантия 60 дней после сдачи</strong>
@@ -567,21 +581,21 @@
       <div class="badge b-red">Профессиональные услуги</div>
       <div style="height:6px;"></div>
       <ul class="items">
-        <li><em>Юридические компании и консалтинг — анализ документов, договоры, исследования, compliance</em></li>
+        <li><em>Юридические компании и консалтинг — анализ документов, договоры, compliance, исследования</em></li>
         <li><em>Бухгалтерия и аудит — автоматизация отчётности, проверка первичной документации</em></li>
         <li><em>HR-агентства и рекрутинг — скрининг резюме, онбординг, коммуникации с кандидатами</em></li>
       </ul>
 
       <div class="cell-divider"></div>
-      <div class="badge b-accent">Здравоохранение и медицина</div>
+      <div class="badge b-accent">Здравоохранение</div>
       <div style="height:6px;"></div>
       <ul class="items">
-        <li><em>Клиники и стоматологии — медицинская документация занимает до 40% времени врача</em></li>
+        <li><em>Клиники и стоматологии — медицинская документация занимает до 40% рабочего времени врача</em></li>
         <li><em>Медицинские сервисы — запись пациентов, напоминания, стандартизация протоколов</em></li>
       </ul>
 
       <div class="cell-divider"></div>
-      <div class="badge b-blue">E-commerce и сервисные компании</div>
+      <div class="badge b-blue">E-commerce и сервисный бизнес</div>
       <div style="height:6px;"></div>
       <ul class="items">
         <li><em>Компании с большим потоком клиентских обращений — поддержка, FAQ, возвраты</em></li>
@@ -589,7 +603,7 @@
       </ul>
 
       <div class="cell-divider"></div>
-      <div class="badge b-amber">Производство и промышленность</div>
+      <div class="badge b-amber">Производство и логистика</div>
       <div style="height:6px;"></div>
       <ul class="items">
         <li><em>Промышленные компании — технический документооборот, отчётность, контроль качества</em></li>
@@ -601,7 +615,7 @@
       <ul class="items">
         <li><em>Средний бизнес 50–500 человек — есть бюджет, нет внутренней AI-экспертизы</em></li>
         <li><em>Компании с уже оцифрованными данными и CRM — низкий порог интеграции</em></li>
-        <li><em>Те, кто уже потратил деньги на фриланс и не получил результат</em></li>
+        <li><em>Те, кто уже тратил деньги на фриланс и не получил результат</em></li>
       </ul>
     </div>
 
@@ -757,7 +771,7 @@
   </div>
 
   <div class="footer">
-    Automy AI · Lean Canvas v1.0 · Май 2026 · Внутренний документ
+    Synapt · AI Agency · Lean Canvas v1.0 · Май 2026 · Внутренний документ
   </div>
 
 </div>
