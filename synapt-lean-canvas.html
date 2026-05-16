@@ -339,39 +339,6 @@
     color: var(--muted);
   }
 
-  .questions-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  .q-card {
-    background: var(--surface);
-    border: 1px solid var(--accent3);
-    border-top: 2px solid var(--accent3);
-    padding: 14px 16px;
-    cursor: default;
-    transition: box-shadow 0.15s;
-  }
-  .q-card:hover { box-shadow: 0 2px 12px rgba(217,119,6,0.12); }
-
-  .q-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent3);
-    margin-bottom: 6px;
-  }
-
-  .q-card p {
-    font-size: 10px;
-    line-height: 1.6;
-    color: var(--muted);
-  }
-
   .section-label {
     margin: 28px 0 14px;
     display: flex;
@@ -430,7 +397,6 @@
     .canvas-grid { grid-template-columns: 1fr 1fr 1fr; }
     .cell-span2 { grid-row: auto; }
     .pos-grid { grid-template-columns: 1fr 1fr; }
-    .questions-grid { grid-template-columns: 1fr 1fr; }
   }
 
   /* ── MOBILE ── */
@@ -445,8 +411,7 @@
     .uvp-sub { font-size: 10px; line-height: 1.6; }
     .canvas-grid,
     .bottom-grid,
-    .pos-grid,
-    .questions-grid { grid-template-columns: 1fr; }
+    .pos-grid { grid-template-columns: 1fr; }
     .cell-span2 { grid-row: auto; }
     .inner-grid { grid-template-columns: 1fr; }
     .cell { padding: 16px 14px 14px; }
@@ -589,7 +554,7 @@
           <em>Полная передача при сдаче — клиент ни от кого не зависит</em>
         </li>
         <li>
-          <strong>Сначала спека, потом разработка</strong>
+          <strong>Сначала спецификация, потом разработка</strong>
           <em>Детально прорабатываем задачу до старта — на финале всё в ожидаемом виде</em>
         </li>
       </ul>
@@ -599,49 +564,45 @@
     <div class="cell cell-amber cell-span2">
       <div class="clabel"><span class="clabel-num">02</span> Сегменты клиентов</div>
 
-      <div class="badge b-red">B2B средний бизнес</div>
+      <div class="badge b-red">Профессиональные услуги</div>
       <div style="height:6px;"></div>
       <ul class="items">
-        <li><em>SaaS-платформы с задачами в поддержке и онбординге (Хантико)</em></li>
-        <li><em>Медицина, право, образование — работа с большими базами знаний (GlobalDent)</em></li>
-        <li><em>EdTech — AI-first разработка (SHKOLA.APP)</em></li>
+        <li><em>Юридические компании и консалтинг — анализ документов, договоры, исследования, compliance</em></li>
+        <li><em>Бухгалтерия и аудит — автоматизация отчётности, проверка первичной документации</em></li>
+        <li><em>HR-агентства и рекрутинг — скрининг резюме, онбординг, коммуникации с кандидатами</em></li>
       </ul>
 
       <div class="cell-divider"></div>
-      <div class="badge b-accent">Корпоративный сектор</div>
+      <div class="badge b-accent">Здравоохранение и медицина</div>
       <div style="height:6px;"></div>
       <ul class="items">
-        <li><em>Промышленность — автоматизация экспертной работы (ЕВРАЗ)</em></li>
-        <li><em>Банки, финтех — автоматизация аналитики</em></li>
+        <li><em>Клиники и стоматологии — медицинская документация занимает до 40% времени врача</em></li>
+        <li><em>Медицинские сервисы — запись пациентов, напоминания, стандартизация протоколов</em></li>
       </ul>
 
       <div class="cell-divider"></div>
-      <div class="badge b-amber">Стартапы / новые продукты</div>
+      <div class="badge b-blue">E-commerce и сервисные компании</div>
       <div style="height:6px;"></div>
       <ul class="items">
-        <li><em>Новые продукты и платформы (Лирика, Лига Плюща)</em></li>
-        <li><em>Сообщества, краудфандинг, донейшн-платформы (Физтех)</em></li>
+        <li><em>Компании с большим потоком клиентских обращений — поддержка, FAQ, возвраты</em></li>
+        <li><em>Ритейл — управление каталогом, описания товаров, персонализация</em></li>
+      </ul>
+
+      <div class="cell-divider"></div>
+      <div class="badge b-amber">Производство и промышленность</div>
+      <div style="height:6px;"></div>
+      <ul class="items">
+        <li><em>Промышленные компании — технический документооборот, отчётность, контроль качества</em></li>
+        <li><em>Логистика — трекинг, коммуникация с контрагентами, предиктивное обслуживание</em></li>
       </ul>
 
       <div class="cell-divider"></div>
       <div class="sub-label">Ранние адопторы</div>
       <ul class="items">
-        <li><em>Профессиональные сообщества — Сколково, МФТИ</em></li>
-        <li><em>Клиенты АССИСТ+</em></li>
-        <li><em>Рефераллы от партнёров</em></li>
+        <li><em>Средний бизнес 50–500 человек — есть бюджет, нет внутренней AI-экспертизы</em></li>
+        <li><em>Компании с уже оцифрованными данными и CRM — низкий порог интеграции</em></li>
+        <li><em>Те, кто уже потратил деньги на фриланс и не получил результат</em></li>
       </ul>
-
-      <div class="cell-divider"></div>
-      <div class="sub-label">Текущие проекты</div>
-      <div>
-        <span class="badge b-blue">Хантико</span>
-        <span class="badge b-green">GlobalDent</span>
-        <span class="badge b-accent">ЕВРАЗ</span>
-        <span class="badge b-amber">SHKOLA.APP</span>
-        <span class="badge b-pink">Лирика</span>
-        <span class="badge b-muted">Лига Плюща</span>
-        <span class="badge b-muted">Донат-платформа</span>
-      </div>
     </div>
 
     <!-- 08 METRICS -->
@@ -651,10 +612,6 @@
         <div class="metric-box">
           <div class="mval">30%</div>
           <div class="mlabel">агентских от<br>стоимости проекта</div>
-        </div>
-        <div class="metric-box">
-          <div class="mval green">5+</div>
-          <div class="mlabel">цель: активных<br>клиентов</div>
         </div>
       </div>
       <ul class="items">
@@ -675,16 +632,16 @@
           <em>Знакомства и рекомендации внутри профессионального круга</em>
         </li>
         <li>
-          <strong>АССИСТ+</strong>
-          <em>Клиенты по HR-направлению приходят с IT-задачами</em>
-        </li>
-        <li>
           <strong>Портфолио кейсов</strong>
-          <em>GlobalDent и Хантико работают как референсы для новых клиентов</em>
+          <em>Реализованные проекты работают как референсы для новых клиентов</em>
         </li>
         <li>
-          <strong>Рефераллы</strong>
+          <strong>Рефераллы от партнёров</strong>
           <em>Партнёры приводят проекты напрямую</em>
+        </li>
+        <li>
+          <strong>Профессиональные сообщества</strong>
+          <em>Отраслевые мероприятия, ассоциации, деловые клубы</em>
         </li>
       </ul>
     </div>
@@ -702,7 +659,7 @@
           <ul class="items">
             <li>
               <strong><span class="em-red">~70%</span> от суммы проекта</strong>
-              <em>Вознаграждение исполнителей (Витя + внешние специалисты под задачу)</em>
+              <em>Вознаграждение исполнителей — пул специалистов под конкретную задачу</em>
             </li>
             <li>
               <strong>LLM API + инфраструктура</strong>
@@ -719,7 +676,7 @@
           <ul class="items">
             <li><em>Корпоративные подписки: Claude, Codex, N8N</em></li>
             <li><em>Инструменты разработки и тестирования</em></li>
-            <li><em>Юридическое оформление (договоры с ИП)</em></li>
+            <li><em>Юридическое оформление договоров</em></li>
           </ul>
           <div class="sub-label" style="margin-top:10px;">Риски</div>
           <ul class="items">
@@ -738,11 +695,11 @@
           <ul class="items">
             <li>
               <strong><span class="em-accent">30% агентских</span> от проекта</strong>
-              <em>Лирика: ~500–600 тыс. руб. · GlobalDent эт.2 · Хантико</em>
+              <em>За управление проектом и подбор специалистов</em>
             </li>
             <li>
               <strong>Первичный аудит</strong>
-              <em>Разбираемся в задаче — может быть отдельной оплачиваемой услугой</em>
+              <em>Разбор задачи и составление спецификации — отдельная оплачиваемая услуга</em>
             </li>
           </ul>
           <div class="sub-label" style="margin-top:10px;">Модель оплаты</div>
@@ -760,11 +717,11 @@
             </li>
             <li>
               <strong>Обучение команды</strong>
-              <em>Учим работать с AI-инструментами (SHKOLA.APP — первый пилот)</em>
+              <em>Учим работать с AI-инструментами внутри компании клиента</em>
             </li>
             <li>
               <strong>Типовые решения для отраслей</strong>
-              <em>Готовый продукт для медицины, дентал-клиник, юрфирм</em>
+              <em>Готовый продукт для медицины, юридических компаний, ритейла</em>
             </li>
           </ul>
         </div>
@@ -796,24 +753,6 @@
       <span class="pos-icon">⚡</span>
       <div class="pos-title">Первый результат за 4–8 недель</div>
       <p>Детально прорабатываем задачу до старта — это экономит время на финале и убирает переделки</p>
-    </div>
-  </div>
-
-  <!-- OPEN QUESTIONS -->
-  <div class="section-label">Открытые вопросы</div>
-
-  <div class="questions-grid">
-    <div class="q-card">
-      <div class="q-title">Модель и ценообразование</div>
-      <p>Только агентские или нужен ретейнер? Как считать стоимость первичного аудита? Есть ли порог входа?</p>
-    </div>
-    <div class="q-card">
-      <div class="q-title">Пул исполнителей</div>
-      <p>Кто ещё кроме Вити? Как вводить новых специалистов и управлять качеством при разных людях?</p>
-    </div>
-    <div class="q-card">
-      <div class="q-title">Масштабирование</div>
-      <p>Когда нужен сайт и публичный бренд Automy AI? Как сделать процесс работы над проектами повторяемым?</p>
     </div>
   </div>
 
