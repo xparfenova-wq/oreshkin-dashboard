@@ -2184,10 +2184,7 @@
     localStorage.setItem('activeWeek', week);
   }
 
-  (function () {
-    const saved = localStorage.getItem('activeWeek');
-    if (saved && saved !== 'w22') switchTab(saved);
-  })();
+  localStorage.setItem('activeWeek', 'w22');
 </script>
 </body>
 </html>
