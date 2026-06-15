@@ -333,40 +333,121 @@
   }
   .back-link:hover { color: var(--accent); border-color: var(--accent); }
 
+  /* bullets → more subtle */
+  ul.li li::before { content: '·'; }
+
+  /* plan column: subtle left accent */
+  td.col-next { border-left: 2px solid rgba(8,145,178,0.12); }
+
+  /* hide цель column */
+  .col-goal, thead th:last-child { display: none !important; }
+
+  /* ── tablet ─────────────────────────────────────────────────────── */
   @media (max-width: 768px) {
-    .container { padding: 24px 12px; }
-
-    .week-nav { gap: 6px; }
-    .week-tab { padding: 8px 12px; font-size: 8px; flex: 1; text-align: center; min-width: 60px; }
+    .container { padding: 20px 14px; }
+    .week-nav { gap: 5px; }
+    .week-tab { padding: 9px 12px; font-size: 8px; }
     .week-tab .tab-dates { font-size: 7px; }
-
-    table { font-size: 10px; }
-    thead th { font-size: 7px; padding: 8px 10px; }
-    tbody td { padding: 10px 10px; }
-
-    .pname { font-size: 9px; min-width: 90px; white-space: normal; }
-    td.col-plan, td.col-fact, td.col-next { min-width: 120px; }
-    td.col-goal { min-width: 100px; }
-
     .month-block { padding: 14px 12px; }
     .progress-grid { grid-template-columns: repeat(2, 1fr); }
-
-    .section-label { font-size: 9px; letter-spacing: 0.12em; }
     .direction { margin-bottom: 28px; }
-
-    ul.li li { font-size: 10px; }
-    .badge { font-size: 7px; padding: 2px 6px; }
+    table { font-size: 11px; }
   }
 
-  @media (max-width: 480px) {
-    .container { padding: 16px 10px; }
-    .week-tab { padding: 7px 8px; font-size: 7px; }
+  /* ── mobile card layout ─────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .container { padding: 14px 10px; }
+
+    /* tabs: горизонтальный скролл */
+    .week-nav {
+      gap: 4px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .week-nav::-webkit-scrollbar { display: none; }
+    .week-tab { padding: 8px 12px; font-size: 8px; flex-shrink: 0; }
     .week-tab .tab-dates { display: none; }
-    table { font-size: 9px; }
-    .pname { font-size: 8px; min-width: 70px; }
-    td.col-plan, td.col-fact, td.col-next { min-width: 100px; }
-    td.col-goal { min-width: 90px; }
+
+    /* таблицы → карточки */
+    .tbl-wrap { overflow-x: visible; }
+    table { display: block; }
+    thead { display: none; }
+    tbody { display: block; }
+
+    tbody tr {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+    tbody tr:hover td { background: var(--surface) !important; }
+    tbody tr:hover .pname { color: var(--accent); }
+
+    tbody td {
+      display: block;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      min-width: auto;
+    }
+    tbody td:last-child { border-bottom: none; }
+
+    td.pname {
+      background: rgba(124,58,237,0.05);
+      font-size: 12px;
+      white-space: normal;
+      letter-spacing: 0.03em;
+      padding: 12px 14px;
+      border-left: 3px solid var(--accent);
+      border-bottom: 1px solid var(--border) !important;
+    }
+
+    td.col-fact::before {
+      content: "Факт";
+      display: block;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    td.col-next::before {
+      content: "План";
+      display: block;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 8px;
+    }
+
+    td.col-next { border-left: none; }
+    td.col-fact, td.col-next { min-width: auto; font-size: 12px; line-height: 1.7; }
+
+    .open-btn { margin-top: 10px; font-size: 8px; padding: 5px 10px; }
+    .section-label { font-size: 9px; letter-spacing: 0.12em; }
+    .direction { margin-bottom: 24px; }
+
+    .month-block { padding: 12px; }
+    .progress-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   }
+
+  @media (max-width: 380px) {
+    .container { padding: 10px 8px; }
+    .week-tab { padding: 7px 10px; font-size: 7px; }
+    td.pname { font-size: 11px; }
+  }
+
 </style>
 </head>
 <body>
@@ -420,7 +501,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W18</th>
           <th>План W19</th>
           <th>Цель к 31.05</th>
@@ -428,7 +509,6 @@
         <tbody>
           <tr>
             <td class="pname">SHKOLA.APP</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Провести созвон во вт</li>
@@ -438,7 +518,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Вт 10:00 проведён звонок</li>
               <li>Подготовлены документы</li>
@@ -452,7 +531,6 @@
           </tr>
           <tr>
             <td class="pname">Evraz</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Написать в формате презентации Вити: что умеем + как подключаемся + упомянуть Hantico</li>
@@ -461,7 +539,6 @@
           </tr>
           <tr>
             <td class="pname">Hantico</td>
-            <td><span class="badge b-wait">После майских</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про ОС</li>
               <li>Ответ: вернутся после майских</li>
@@ -474,21 +551,18 @@
           </tr>
           <tr>
             <td class="pname">Краудфандинг (Алексей)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Проведён звонок</li></ul></td>
             <td class="col-next"><ul class="li"><li>Напомнить про ТЗ</li></ul></td>
             <td class="col-goal">Подписание и старт проекта<br>и/или монетизируемый контакт</td>
           </tr>
           <tr>
             <td class="pname">Лирика (Алексей)</td>
-            <td><span class="badge b-pause">Обсуждение</span></td>
             <td class="col-fact"><ul class="li"><li>На этапе обсуждения</li></ul></td>
             <td class="col-next"><ul class="li"><li>Не напоминать — ждём следующей недели</li></ul></td>
             <td class="col-goal">Подписание и старт проекта<br>и/или монетизируемый контакт</td>
           </tr>
           <tr>
             <td class="pname">Донат-платформа<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Доработаны ответы для юриста</li>
               <li>Получена и отредактирована юрмодель</li>
@@ -504,21 +578,18 @@
           </tr>
           <tr>
             <td class="pname">Новые контакты</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">— / ?</td>
             <td class="col-next"><ul class="li"><li>2–3 новых контакта</li></ul></td>
             <td class="col-goal">4 отправленных КП</td>
           </tr>
           <tr>
             <td class="pname">Краудфандинг</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>08.05: написать Алексею и Марине в личке</li></ul></td>
             <td class="col-goal">Договорённость о сотрудничестве</td>
           </tr>
           <tr>
             <td class="pname">Екатерина дизайнер<br>(КП)</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Шаблон КП с кейсами — узнать стоимость, условия, сроки</li></ul></td>
             <td class="col-goal">КП отправлено</td>
@@ -533,7 +604,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W18</th>
           <th>План W19</th>
           <th>Цель к 31.05</th>
@@ -541,7 +612,6 @@
         <tbody>
           <tr>
             <td class="pname">Курс ИИ для бизнеса</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Пересборка вебинара (сделано)</li>
               <li>Юридические документы (сделано)</li>
@@ -570,7 +640,6 @@
           </tr>
           <tr>
             <td class="pname">Курс Cursor</td>
-            <td><span class="badge b-done">Завершён</span></td>
             <td class="col-fact">Курс проведён (ОС собрана)</td>
             <td class="col-next">—</td>
             <td class="col-goal">ОС собрана</td>
@@ -585,7 +654,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W18</th>
           <th>План W19</th>
           <th>Цель к 31.05</th>
@@ -593,14 +662,12 @@
         <tbody>
           <tr>
             <td class="pname">Школково<br>— промокод</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Проанализировать инфоповоды и составить план коммуникации для рекламы</li></ul></td>
             <td class="col-goal">Опубликованная реклама</td>
           </tr>
           <tr>
             <td class="pname">Оцифровка<br>социального капитала</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact"></td>
             <td class="col-next"><span class="empty-note">— уточняется</span></td>
             <td class="col-goal">Соцкапитал оцифрован</td>
@@ -615,7 +682,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W18</th>
           <th>План W19</th>
           <th>Цель к 31.05</th>
@@ -623,28 +690,24 @@
         <tbody>
           <tr>
             <td class="pname">Наставничество</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Проведён модуль</li></ul></td>
             <td class="col-next"><span class="empty-note">— уточняется</span></td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Корректировки<br>по итогам Прохора</td>
-            <td><span class="badge b-wait">В процессе</span></td>
             <td class="col-fact"><ul class="li"><li>Подготовлены правки в документы</li></ul></td>
             <td class="col-next"><ul class="li"><li>Получить согласование и актуальные документы</li></ul></td>
             <td class="col-goal">Скорректированное направление<br>с т.з. ПДн</td>
           </tr>
           <tr>
             <td class="pname">Новые контакты</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">— / ?</td>
             <td class="col-next"><ul class="li"><li>2–3 новых контакта</li></ul></td>
             <td class="col-goal">4 наставляемых (?)</td>
           </tr>
           <tr>
             <td class="pname">Вера Анатольевна</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Написали повторно</li></ul></td>
             <td class="col-next"><ul class="li"><li>Напомнить 08.05</li></ul></td>
             <td class="col-goal">—</td>
@@ -659,7 +722,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W18</th>
           <th>План W19</th>
           <th>Цель к 31.05</th>
@@ -667,7 +730,6 @@
         <tbody>
           <tr>
             <td class="pname">Посты в ТГ (2/нед)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
             <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
             <td class="col-goal">2 поста/нед стабильно</td>
@@ -682,7 +744,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W18</th>
           <th>План W19</th>
           <th>Цель к 31.05</th>
@@ -690,28 +752,24 @@
         <tbody>
           <tr>
             <td class="pname">Первые (ИРИ)</td>
-            <td><span class="badge b-wait">Ожидание</span></td>
             <td class="col-fact"><ul class="li"><li>Напомнили Марине про ОС</li></ul></td>
             <td class="col-next"><ul class="li"><li>Напомнить про ОС повторно (после 18.05)</li></ul></td>
             <td class="col-goal">Получить ОС</td>
           </tr>
           <tr>
             <td class="pname">Корректировки Прохора<br>(Медиа)</td>
-            <td><span class="badge b-wait">В процессе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Получить ОС от ассистента Марины</li></ul></td>
             <td class="col-goal">Скорректированное направление<br>с т.з. ПДн</td>
           </tr>
           <tr>
             <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
-            <td><span class="badge b-research">Go/no-go</span></td>
             <td class="col-fact">?</td>
             <td class="col-next"><span class="empty-note">— уточняется</span></td>
             <td class="col-goal">Go/no-go решение</td>
           </tr>
           <tr>
             <td class="pname">Международный форум<br>для детских садов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Согласован зум с Аидой на вт</li>
               <li>Согласован зум с Мариной на пн</li>
@@ -724,7 +782,6 @@
           </tr>
           <tr>
             <td class="pname">Вика-Дима + ИИ</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про кейсы с ИИ-контентом</li>
               <li>ОС: нужна допподписка + нет средств, дорого</li>
@@ -747,7 +804,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W18</th>
           <th>План W19</th>
           <th>Цель к 31.05</th>
@@ -755,7 +812,6 @@
         <tbody>
           <tr>
             <td class="pname">Командные Zoom'ы</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Проведён зум (07.05)</li></ul></td>
             <td class="col-next"><ul class="li"><li>Перенести следующий зум на пн 16:00–17:00 (приоритет)</li></ul></td>
             <td class="col-goal">4 Zoom-встречи команды</td>
@@ -765,49 +821,42 @@
 
           <tr>
             <td class="pname">Финансы P&amp;L</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Занесены оплаты за Claude-подписки</li></ul></td>
             <td class="col-next"><ul class="li"><li>Вести таблицу</li></ul></td>
             <td class="col-goal">P&amp;L актуален</td>
           </tr>
           <tr>
             <td class="pname">Нейросеть Ghost<br>и подобные</td>
-            <td><span class="badge b-done">Готово ✓</span></td>
             <td class="col-fact"><ul class="li"><li>Разобралась в предложениях на рынке: подключение ИИ-базы к зумам ✓</li></ul></td>
             <td class="col-next">—</td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Зарубежные сервисы</td>
-            <td><span class="badge b-done">Готово ✓</span></td>
             <td class="col-fact"><ul class="li"><li>Нашла решение для оплаты зарубежных сервисов ✓</li></ul></td>
             <td class="col-next">—</td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Перенести записи<br>зумов на Г Диск Антона</td>
-            <td><span class="badge b-done">Готово ✓</span></td>
             <td class="col-fact">Записи перенесены ✓</td>
             <td class="col-next">—</td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Курс по ИИ</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Посмотреть 2–3 урока</li></ul></td>
             <td class="col-goal">Посмотреть весь курс</td>
           </tr>
           <tr>
             <td class="pname">Прибраться<br>на Гугл Диске</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Прибраться</li></ul></td>
             <td class="col-goal">Привести в порядок</td>
           </tr>
           <tr>
             <td class="pname">Яндекс Диск</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Перенести доки</li></ul></td>
             <td class="col-goal">Документы перенесены</td>
@@ -822,14 +871,13 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Кто</th><th>Статус</th>
+          <th>Кто</th>
           <th>Факт W18</th>
           <th>План W19</th>
         </tr></thead>
         <tbody>
           <tr>
             <td class="pname">Маргарита</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Потестила несколько библиотек для совместного использования Claude, вывела его в интерактивную веб-консоль</li>
               <li>Собрала MVP платформы для платного курса: купила домен (oreshkinai.ru), настроила админ-панель с аналитикой пользователей, ограничением входа на количество устройств, загрузкой видео с водяными знаками и доп. материалами</li>
@@ -844,7 +892,6 @@
           </tr>
           <tr>
             <td class="pname">Никита</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Завайбкодить лендинг с кейсами</li>
@@ -869,7 +916,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W19</th>
           <th>План W20</th>
           <th>Цель мая</th>
@@ -877,7 +924,6 @@
         <tbody>
           <tr>
             <td class="pname">SHKOLA.APP</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели созвон во вт</li>
               <li>Напомнили про отправку фичей — получили их</li>
@@ -892,7 +938,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Подписали 2 этап</li>
               <li>Получили оплату</li>
@@ -905,7 +950,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент:<br>сопровождение/доработка бота</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Отправить аудит, варианты сотрудничества с ценами и сроками</li>
@@ -916,7 +960,6 @@
           </tr>
           <tr>
             <td class="pname">Лирика (Алексей)</td>
-            <td><span class="badge b-pause">Обсуждение</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Уточнить статус переговоров</li>
@@ -925,7 +968,6 @@
           </tr>
           <tr>
             <td class="pname">Лига плюща<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-wait">Перенос с апреля</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Переносим ресёрч/обсуждение на начало июня</li>
@@ -934,7 +976,6 @@
           </tr>
           <tr>
             <td class="pname">Evraz</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact"><ul class="li">
               <li>Написали в формате презентации Вити: что умеем + как подключаемся + упомянули Hantico</li>
             </ul></td>
@@ -945,7 +986,6 @@
           </tr>
           <tr>
             <td class="pname">Hantico</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про ОС</li>
               <li>Витя прислал то, о чём говорили на звонке</li>
@@ -958,7 +998,6 @@
           </tr>
           <tr>
             <td class="pname">Краудфандинг</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили ТЗ, сделали расчёт</li>
             </ul></td>
@@ -969,7 +1008,6 @@
           </tr>
           <tr>
             <td class="pname">Донат-платформа<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Отправили документ на ревью юристам ВИ</li>
               <li>Получили ОС по стоимости разработки от Вити</li>
@@ -985,7 +1023,6 @@
           </tr>
           <tr>
             <td class="pname">Захарова х МФТИ<br>х AI/IT Lab</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Получить ОС по проекту</li>
@@ -995,7 +1032,6 @@
           </tr>
           <tr>
             <td class="pname">Екатерина дизайнер<br>(КП)</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact"><ul class="li">
               <li>Узнали стоимость, условия, сроки (15к)</li>
             </ul></td>
@@ -1004,7 +1040,6 @@
           </tr>
           <tr>
             <td class="pname">Новые контакты</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>2–3 новых контакта</li>
@@ -1013,7 +1048,6 @@
           </tr>
           <tr>
             <td class="pname">Lean Canvas</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Составить</li>
@@ -1023,7 +1057,6 @@
           </tr>
           <tr>
             <td class="pname">Профиль консалтера</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Составить портрет</li>
@@ -1040,7 +1073,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W19</th>
           <th>План W20</th>
           <th>Цель мая</th>
@@ -1048,7 +1081,6 @@
         <tbody>
           <tr>
             <td class="pname">Курс ИИ для бизнеса</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Подключили ЮКассу вместо Продамуса — быстро, удобно</li>
               <li>Excel-аналитика: конверсия, источники лидов</li>
@@ -1082,7 +1114,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W19</th>
           <th>План W20</th>
           <th>Цель мая</th>
@@ -1090,14 +1122,12 @@
         <tbody>
           <tr>
             <td class="pname">Посты в ТГ (2/нед)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
             <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
             <td class="col-goal">2 поста/нед стабильно</td>
           </tr>
           <tr>
             <td class="pname">Корректировки Прохора<br>(Медиа)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Обновили Политику конфиденциальности и добавили на сайт</li>
             </ul></td>
@@ -1111,7 +1141,6 @@
           </tr>
           <tr>
             <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
-            <td><span class="badge b-research">Go/no-go</span></td>
             <td class="col-fact">?</td>
             <td class="col-next"><ul class="li">
               <li>Получить ОС / выход на Сторонского или другого потенциального участника</li>
@@ -1121,7 +1150,6 @@
           </tr>
           <tr>
             <td class="pname">Международный форум<br>для детских садов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зумы с Аидой и Мариной</li>
               <li>Напомнили про добавление в чат и презентацию Аиде</li>
@@ -1133,7 +1161,6 @@
           </tr>
           <tr>
             <td class="pname">Вова</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Напомнить про ответы на вопросы</li>
@@ -1144,7 +1171,6 @@
           </tr>
           <tr>
                         <td class="pname">Вика-Дима + ИИ</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Обсудили подключение к ИИ-контенту для воронки в Инстаграме</li>
             </ul></td>
@@ -1155,7 +1181,6 @@
           </tr>
           <tr>
             <td class="pname">Аудио: идея формата<br>(Вика/Дима/Вова)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Записать аудио — идея короткого видео-формата и самого технологичного благотворительного фонда России</li>
@@ -1164,7 +1189,6 @@
           </tr>
           <tr>
             <td class="pname">Более короткий формат:<br>технологичный фонд</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Голосом записать: как реализовать видео, контекст, план, как снять</li>
@@ -1182,7 +1206,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W19</th>
           <th>План W20</th>
           <th>Цель мая</th>
@@ -1190,14 +1214,12 @@
         <tbody>
           <tr>
             <td class="pname">Наставничество</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">?</td>
             <td class="col-next">?</td>
             <td class="col-goal">?</td>
           </tr>
           <tr>
             <td class="pname">Новые контакты</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>2–3 новых контакта</li>
@@ -1206,7 +1228,6 @@
           </tr>
           <tr>
             <td class="pname">Вера Анатольевна</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Составили анонс, отправили</li>
               <li>Напомнили про ОС</li>
@@ -1226,7 +1247,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W19</th>
           <th>План W20</th>
           <th>Цель мая</th>
@@ -1234,7 +1255,6 @@
         <tbody>
           <tr>
             <td class="pname">Оцифровка<br>социального капитала</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Оцифровать и сделать первые контакты</li>
@@ -1243,7 +1263,6 @@
           </tr>
           <tr>
             <td class="pname">Командные Zoom'ы</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Перенесли зум на пн 17</li>
             </ul></td>
@@ -1254,7 +1273,6 @@
           </tr>
           <tr>
             <td class="pname">Курс по ИИ</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Посмотрела 2–3 урока</li>
             </ul></td>
@@ -1265,7 +1283,6 @@
           </tr>
           <tr>
             <td class="pname">Яндекс Диск</td>
-            <td><span class="badge b-done">Готово ✓</span></td>
             <td class="col-fact"><ul class="li">
               <li>Перенесены документы</li>
             </ul></td>
@@ -1274,7 +1291,6 @@
           </tr>
           <tr>
             <td class="pname">Финансы P&amp;L</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Никита сделал свою версию таблиц</li>
             </ul></td>
@@ -1285,7 +1301,6 @@
           </tr>
           <tr>
             <td class="pname">Новое заявление<br>оператора персданных</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Написала Илье, получила новые данные</li>
             </ul></td>
@@ -1296,35 +1311,30 @@
           </tr>
           <tr>
             <td class="pname">Профиль консалтера</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Составить</li></ul></td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Профиль<br>контент-менеджера</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Составить</li></ul></td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Вайбкодинг:<br>лендинг-визитка</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Первая версия</li></ul></td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Посмотреть видео<br>про скрам</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Посмотреть</li></ul></td>
             <td class="col-goal">—</td>
           </tr>
           <tr>
             <td class="pname">Синхронизация<br>с Никитой по репо</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li"><li>Синхронизироваться по репозиторию / единому контексту</li></ul></td>
             <td class="col-goal">—</td>
@@ -1340,14 +1350,13 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Кто</th><th>Статус</th>
+          <th>Кто</th>
           <th>Факт W19</th>
           <th>План W20</th>
         </tr></thead>
         <tbody>
           <tr>
             <td class="pname">Маргарита</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Закончила платформу для курса (будет закончена сегодня)</li>
               <li>Закончила ТГ-бот для лицея (ждёт обратную связь)</li>
@@ -1360,7 +1369,6 @@
           </tr>
           <tr>
             <td class="pname">Никита</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Завайбкодили лендинг с кейсами (перенесено на конец мая)</li>
               <li>Доработали программу курса по визуалу: градиенты, логотип, base44 (готово)</li>
@@ -1384,7 +1392,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W20</th>
           <th>План W21</th>
           <th>Цель мая</th>
@@ -1392,7 +1400,6 @@
         <tbody>
           <tr>
             <td class="pname">SHKOLA.APP</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про ОС</li>
               </ul></td>
@@ -1404,7 +1411,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Сдали 1 и 2 спринт (Инфраструктура, CI/CD, наблюдаемость, Единый аккаунт + вход через Telegram)</li>
             </ul></td>
@@ -1415,7 +1421,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент:<br>сопровождение/доработка бота</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Отправили аудит, варианты сотрудничества с ценами и сроками</li>
             </ul></td>
@@ -1426,7 +1431,6 @@
           </tr>
           <tr>
             <td class="pname">Лирика (Алексей)</td>
-            <td><span class="badge b-pause">Обсуждение</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про ОС</li>
             </ul></td>
@@ -1437,7 +1441,6 @@
           </tr>
           <tr>
             <td class="pname">Лига плюща<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-wait">Перенос с апреля</span></td>
             <td class="col-fact"><ul class="li">
               <li>Ресёрч/обсуждение перенесены на начало июня</li>
             </ul></td>
@@ -1448,7 +1451,6 @@
           </tr>
           <tr>
             <td class="pname">Evraz</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact"><ul class="li">
               <li>Вернулись за ОС</li>
             </ul></td>
@@ -1459,7 +1461,6 @@
           </tr>
           <tr>
             <td class="pname">Hantico</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили и получили ОС</li>
               <li>Провели звонок с Кириллом</li>
@@ -1471,7 +1472,6 @@
           </tr>
           <tr>
             <td class="pname">Донат-платформа<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили оценку от юристов ВИ</li>
             </ul></td>
@@ -1483,7 +1483,6 @@
           </tr>
           <tr>
             <td class="pname">Lean Canvas</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Составили</li>
             </ul>
@@ -1496,7 +1495,6 @@
           </tr>
           <tr>
             <td class="pname">Профиль консалтера</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Составить портрет</li>
@@ -1506,7 +1504,6 @@
           </tr>
           <tr>
             <td class="pname">Агора:<br>IT-предложение</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Подготовлено предложение</li>
             </ul></td>
@@ -1518,7 +1515,6 @@
           </tr>
           <tr>
             <td class="pname">Поиск альтернативных<br>IT-специалистов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Найдены 2 специалиста</li>
             </ul></td>
@@ -1537,7 +1533,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W20</th>
           <th>План W21</th>
           <th>Цель мая</th>
@@ -1545,7 +1541,6 @@
         <tbody>
           <tr>
             <td class="pname">Курс ИИ для бизнеса</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели 2 модуль (вебинар), обновили дизайн презентации и скиллы в Claude</li>
               <li>Записали и выпустили модуль про GitHub, оптимизировали монтаж</li>
@@ -1576,7 +1571,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W20</th>
           <th>План W21</th>
           <th>Цель мая</th>
@@ -1584,14 +1579,12 @@
         <tbody>
           <tr>
             <td class="pname">Посты в ТГ (2/нед)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
             <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
             <td class="col-goal">2 поста/нед стабильно</td>
           </tr>
           <tr>
             <td class="pname">Корректировки Прохора<br>(Медиа)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Политика обработки персональных данных</li>
               <li>Согласие на обработку персональных данных</li>
@@ -1606,7 +1599,6 @@
           </tr>
           <tr>
             <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
-            <td><span class="badge b-research">Go/no-go</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Открытая задача — думать над позиционированием/концепцией</li>
@@ -1615,7 +1607,6 @@
           </tr>
           <tr>
             <td class="pname">Международный форум<br>для детских садов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про добавление в чат и презентацию Аиде</li>
             </ul></td>
@@ -1626,7 +1617,6 @@
           </tr>
           <tr>
             <td class="pname">Вова</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про ответы на вопросы</li>
               <li>Получили их</li>
@@ -1639,7 +1629,6 @@
           </tr>
           <tr>
             <td class="pname">Аудио: идея формата<br>(Вика/Дима/Вова)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Голосом записали: как реализовать видео, контекст, план, как снять</li></ul></td>
             <td class="col-next"><ul class="li"><li>Послушать ГС по медиа Вике</li></ul></td>
             <td class="col-goal">—</td>
@@ -1654,7 +1643,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W20</th>
           <th>План W21</th>
           <th>Цель мая</th>
@@ -1662,7 +1651,6 @@
         <tbody>
           <tr>
             <td class="pname">Наставничество</td>
-            <td><span class="badge b-pause">Пауза</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>До июня приоритета в этом нет</li>
@@ -1680,7 +1668,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W20</th>
           <th>План W21</th>
           <th>Цель мая</th>
@@ -1688,7 +1676,6 @@
         <tbody>
           <tr>
             <td class="pname">Оцифровка<br>социального капитала</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Перенос на 1–7 июня</li>
@@ -1697,7 +1684,6 @@
           </tr>
           <tr>
             <td class="pname">Финансы P&amp;L</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Внесли оплаты в новую таблицу</li>
             </ul></td>
@@ -1708,7 +1694,6 @@
           </tr>
           <tr>
             <td class="pname">Новое заявление<br>оператора персданных</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Отправить заявление</li>
@@ -1717,7 +1702,6 @@
           </tr>
           <tr>
             <td class="pname">Профиль контент-дизайнера/<br>менеджера</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Сделан</li></ul></td>
             <td class="col-next"><ul class="li">
               <li>Посмотреть, дать ОС</li>
@@ -1728,7 +1712,6 @@
           </tr>
           <tr>
             <td class="pname">Лендинг-визитка</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>Первая версия готова</li></ul></td>
             <td class="col-next"><ul class="li">
               <li>Получить наработки по лендингу / доступы / данные по домену</li>
@@ -1738,7 +1721,6 @@
           </tr>
           <tr>
             <td class="pname">Документы Вите</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Подготовлены акты и отчёты</li>
             </ul></td>
@@ -1749,7 +1731,6 @@
           </tr>
           <tr>
             <td class="pname">Бот: Сообщество<br>выпускников лицея №1</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Сделали бота</li>
             </ul></td>
@@ -1774,7 +1755,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W21</th>
           <th>План W22</th>
           <th>Цель мая</th>
@@ -1782,7 +1763,6 @@
         <tbody>
           <tr>
             <td class="pname">SHKOLA.APP</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили про ОС</li>
               <li>Провели зум при необходимости для детального обсуждения</li>
@@ -1795,7 +1775,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Дали апдейт по статусу: 2 спринт доделывают, 3 спринт в процессе</li>
             </ul></td>
@@ -1807,7 +1786,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент:<br>сопровождение/доработка бота</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Проверили, доработали КП</li>
             </ul></td>
@@ -1820,7 +1798,6 @@
           </tr>
           <tr>
             <td class="pname">Алексей: проекты</td>
-            <td><span class="badge b-pause">Пауза / ожидание</span></td>
             <td class="col-fact"><ul class="li">
               <li>Вернулись за апдейтом по проектам</li>
               <li>Аналог Slack для РФ и Перенос мини-приложений Telegram→Max — на паузе</li>
@@ -1835,7 +1812,6 @@
           </tr>
           <tr>
             <td class="pname">Лига плюща<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-wait">Перенос с апреля</span></td>
             <td class="col-fact"><ul class="li">
               <li>Пауза</li>
             </ul></td>
@@ -1846,7 +1822,6 @@
           </tr>
           <tr>
             <td class="pname">Evraz</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили запрос на зум</li>
             </ul></td>
@@ -1857,7 +1832,6 @@
           </tr>
           <tr>
             <td class="pname">Витя: регламент<br>ведения проектов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Обновили регламент</li>
             </ul></td>
@@ -1869,7 +1843,6 @@
           </tr>
           <tr>
             <td class="pname">Hantico</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Напомнили о себе Кириллу и в общий чат</li>
               <li>Не получили ОС</li>
@@ -1881,7 +1854,6 @@
           </tr>
           <tr>
             <td class="pname">Донат-платформа<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Обновили юрмодель и письмо ректору</li>
               <li>Провели зум с Лёшей</li>
@@ -1895,7 +1867,6 @@
           </tr>
           <tr>
             <td class="pname">Lean Canvas</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Изучить, дать ОС</li>
@@ -1905,7 +1876,6 @@
           </tr>
           <tr>
             <td class="pname">Профиль консалтера</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Составили портрет</li>
               <li>Записали ГС Наталье — будет ли ок искать очень толерантного к неопределённости консалтера</li>
@@ -1917,7 +1887,6 @@
           </tr>
           <tr>
             <td class="pname">Агора:<br>IT-предложение</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили ОС от Никиты</li>
             </ul></td>
@@ -1929,7 +1898,6 @@
           </tr>
           <tr>
             <td class="pname">Поиск альтернативных<br>IT-специалистов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Изучили их презентацию/сайт</li>
             </ul></td>
@@ -1948,7 +1916,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W21</th>
           <th>План W22</th>
           <th>Цель мая</th>
@@ -1956,7 +1924,6 @@
         <tbody>
           <tr>
             <td class="pname">Курс ИИ для бизнеса</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Модуль 02 и доп. модуль (Claude/токены) выпущены</li>
               <li>Higgsfield пройден полностью, функционал понятен</li>
@@ -1987,7 +1954,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W21</th>
           <th>План W22</th>
           <th>Цель мая</th>
@@ -1995,14 +1962,12 @@
         <tbody>
           <tr>
             <td class="pname">Посты в ТГ (2/нед)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
             <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
             <td class="col-goal">2 поста/нед стабильно</td>
           </tr>
           <tr>
             <td class="pname">Корректировки Прохора<br>(Медиа)</td>
-            <td><span class="badge b-done">Готово ✓</span></td>
             <td class="col-fact"><ul class="li">
               <li>Перепроверили и поправили документы</li>
               <li>Сохранили документы по медиа на диск</li>
@@ -2013,7 +1978,6 @@
           </tr>
           <tr>
             <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
-            <td><span class="badge b-research">Go/no-go</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Открытая задача — думать над позиционированием/концепцией</li>
@@ -2022,7 +1986,6 @@
           </tr>
           <tr>
             <td class="pname">Международный форум<br>для детских садов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Запросили ОС по юр запросу у Вики</li>
               <li>Структурировали и вернулись с ответом в чат</li>
@@ -2034,7 +1997,6 @@
           </tr>
           <tr>
             <td class="pname">Вова</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Держим связь с ним</li>
             </ul></td>
@@ -2045,7 +2007,6 @@
           </tr>
           <tr>
             <td class="pname">Аудио: идея формата<br>(Вика/Дима/Вова)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Послушала ГС по медиа Вике</li>
             </ul></td>
@@ -2064,7 +2025,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W21</th>
           <th>План W22</th>
           <th>Цель мая</th>
@@ -2072,7 +2033,6 @@
         <tbody>
           <tr>
             <td class="pname">Наставничество</td>
-            <td><span class="badge b-pause">Пауза</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>До июня приоритета в этом нет</li>
@@ -2090,7 +2050,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W21</th>
           <th>План W22</th>
           <th>Цель мая</th>
@@ -2098,7 +2058,6 @@
         <tbody>
           <tr>
             <td class="pname">Оцифровка<br>социального капитала</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Перенос на 1–7 июня</li>
@@ -2107,7 +2066,6 @@
           </tr>
           <tr>
             <td class="pname">Финансы P&amp;L</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Добавили таблицы под налоги и для вывода</li>
               <li>Оптимизировали общую сводную таблицу</li>
@@ -2119,7 +2077,6 @@
           </tr>
           <tr>
             <td class="pname">Новое заявление<br>оператора персданных</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Заполнить по завершении работы/публикации лендинга-визитки</li>
@@ -2128,7 +2085,6 @@
           </tr>
           <tr>
             <td class="pname">Профиль контент-дизайнера/<br>менеджера</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Посмотреть, дать ОС</li>
@@ -2139,7 +2095,6 @@
           </tr>
           <tr>
             <td class="pname">Лендинг-визитка</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили наработки, доработали тексты</li>
             </ul></td>
@@ -2150,7 +2105,6 @@
           </tr>
           <tr>
             <td class="pname">Документы Вите</td>
-            <td><span class="badge b-done">Готово ✓</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили с подписями, загрузили на диск</li>
             </ul></td>
@@ -2159,7 +2113,6 @@
           </tr>
           <tr>
             <td class="pname">Бот: Сообщество<br>выпускников лицея №1</td>
-            <td><span class="badge b-done">Готово ✓</span></td>
             <td class="col-fact"><ul class="li">
               <li>Перепроверили документы</li>
               <li>Подготовили ТЗ для Маргариты</li>
@@ -2182,7 +2135,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W22</th>
           <th>План W23</th>
           <th>Цель мая</th>
@@ -2190,7 +2143,6 @@
         <tbody>
           <tr>
             <td class="pname">SHKOLA.APP</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Актуализировать статус</li>
@@ -2199,7 +2151,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум-демонстрацию</li>
             </ul></td>
@@ -2212,7 +2163,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент:<br>сопровождение/доработка бота</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум</li>
             </ul></td>
@@ -2224,7 +2174,6 @@
           </tr>
           <tr>
             <td class="pname">Алексей: проекты</td>
-            <td><span class="badge b-pause">Пауза / ожидание</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Вернуться 06.06 по Лирике</li>
@@ -2234,7 +2183,6 @@
           </tr>
           <tr>
             <td class="pname">Лига плюща<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-wait">Перенос с апреля</span></td>
             <td class="col-fact"><ul class="li">
               <li>Пауза</li>
             </ul></td>
@@ -2245,7 +2193,6 @@
           </tr>
           <tr>
             <td class="pname">Evraz</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум</li>
             </ul></td>
@@ -2254,7 +2201,6 @@
           </tr>
           <tr>
             <td class="pname">Витя</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Переподписать договор с ИП</li>
@@ -2263,7 +2209,6 @@
           </tr>
           <tr>
             <td class="pname">Hantico</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Писали для актуализации статуса Кириллу и Маргарите</li>
               <li>Получили ответ от Кирилла</li>
@@ -2275,7 +2220,6 @@
           </tr>
           <tr>
             <td class="pname">Донат-платформа<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Сделали питч-презентацию для Виктора Кузнецова</li>
               <li>Передали контекст Вите для разработки ТЗ</li>
@@ -2290,7 +2234,6 @@
           </tr>
           <tr>
             <td class="pname">Агора:<br>IT-предложение</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Актуализировать задачу Вите для оценки реализуемости и готовности его к этому</li>
@@ -2300,7 +2243,6 @@
           </tr>
           <tr>
             <td class="pname">Поиск альтернативных<br>IT-специалистов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Узнать условия сотрудничества</li>
@@ -2317,7 +2259,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W22</th>
           <th>План W23</th>
           <th>Цель мая</th>
@@ -2325,7 +2267,6 @@
         <tbody>
           <tr>
             <td class="pname">Курс ИИ для бизнеса</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Все 10 задач закрыты ✓ + 6 доп.</li>
               <li>Курсанты + фокус-группа переведены на платформу, аналитика подключена</li>
@@ -2359,7 +2300,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W22</th>
           <th>План W23</th>
           <th>Цель мая</th>
@@ -2367,14 +2308,12 @@
         <tbody>
           <tr>
             <td class="pname">Посты в ТГ (2/нед)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
             <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
             <td class="col-goal">2 поста/нед стабильно</td>
           </tr>
           <tr>
             <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
-            <td><span class="badge b-research">Go/no-go</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Открытая задача — думать над позиционированием/концепцией</li>
@@ -2383,7 +2322,6 @@
           </tr>
           <tr>
             <td class="pname">Международный форум<br>для детских садов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Узнали статус (на следующей неделе стартуют решение вопроса)</li>
             </ul></td>
@@ -2396,7 +2334,6 @@
           </tr>
           <tr>
             <td class="pname">Вова</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Запланировать зум</li>
@@ -2405,7 +2342,6 @@
           </tr>
           <tr>
             <td class="pname">Аудио: идея формата<br>(Вика/Дима/Вова)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Запланировать зум</li>
@@ -2422,7 +2358,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W22</th>
           <th>План W23</th>
           <th>Цель мая</th>
@@ -2430,7 +2366,6 @@
         <tbody>
           <tr>
             <td class="pname">Наставничество</td>
-            <td><span class="badge b-pause">Пауза</span></td>
             <td class="col-fact"><ul class="li">
               <li>Запланировали зум на 03.06 18:00</li>
             </ul></td>
@@ -2450,7 +2385,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W22</th>
           <th>План W23</th>
           <th>Цель мая</th>
@@ -2458,7 +2393,6 @@
         <tbody>
           <tr>
             <td class="pname">Составить портрет<br>Бизнес Ассистента</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Составили</li>
             </ul>
@@ -2471,7 +2405,6 @@
           </tr>
           <tr>
             <td class="pname">Составить портрет<br>Техпроджекта</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Составили</li>
             </ul>
@@ -2485,7 +2418,6 @@
 
           <tr>
             <td class="pname">Оцифровка<br>социального капитала</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Перенос на 1–7 июня</li>
@@ -2494,7 +2426,6 @@
           </tr>
           <tr>
             <td class="pname">Новое заявление<br>оператора персданных</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Обновить после публикации лендинга</li>
@@ -2503,7 +2434,6 @@
           </tr>
           <tr>
             <td class="pname">Лендинг-визитка</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Добавили юрдокументы и обновили фото/карточки</li>
             </ul>
@@ -2527,7 +2457,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W23</th>
           <th>План W24</th>
           <th>Цель июня</th>
@@ -2535,7 +2465,6 @@
         <tbody>
           <tr>
             <td class="pname">SHKOLA.APP</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Актуализировать статус (?)</li>
@@ -2544,7 +2473,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум, внесли правки</li>
             </ul></td>
@@ -2556,7 +2484,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент:<br>сопровождение/доработка бота</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Заключили договор</li>
             </ul></td>
@@ -2568,7 +2495,6 @@
           </tr>
           <tr>
             <td class="pname">Алексей: проекты</td>
-            <td><span class="badge b-pause">Пауза / ожидание</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Вернуться 06.06 по Лирике</li>
@@ -2578,7 +2504,6 @@
           </tr>
           <tr>
             <td class="pname">Лига плюща<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-wait">Перенос с апреля</span></td>
             <td class="col-fact"><ul class="li">
               <li>Пауза</li>
             </ul></td>
@@ -2589,7 +2514,6 @@
           </tr>
           <tr>
             <td class="pname">Evraz</td>
-            <td><span class="badge b-kp">КП</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Вернуться в начале июля</li>
@@ -2598,7 +2522,6 @@
           </tr>
           <tr>
             <td class="pname">Витя</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Переподписать договор с ИП</li>
@@ -2607,7 +2530,6 @@
           </tr>
           <tr>
             <td class="pname">Hantico</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Актуализировать статус с Маргаритой и Игорем</li>
@@ -2616,7 +2538,6 @@
           </tr>
           <tr>
             <td class="pname">Платформа<br>Благодарности</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Сделали сайт</li>
               <li>Получили оценку от Вити <a href="https://victorkalugin.notion.site/3785ccc94cc4803ba961df9b4a9db0e3?source=copy_link" target="_blank" class="open-btn" style="display:inline-block;padding:2px 10px;font-size:10px;margin-left:6px">Смотреть →</a></li>
@@ -2633,7 +2554,6 @@
           </tr>
           <tr>
             <td class="pname">Агора:<br>IT-предложение</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Актуализировать задачу Вите для оценки реализуемости и готовности его к этому</li>
@@ -2643,7 +2563,6 @@
           </tr>
           <tr>
             <td class="pname">Поиск альтернативных<br>IT-специалистов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили согласие на партнёрский формат взаимодействия от двух специалистов</li>
             </ul></td>
@@ -2662,7 +2581,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W23</th>
           <th>План W24</th>
           <th>Цель мая</th>
@@ -2670,7 +2589,6 @@
         <tbody>
           <tr>
             <td class="pname">Курс ИИ для бизнеса</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Встреча по консалтингу в Innorto ✓ — договорились, начали работать</li>
               <li>Продвижение курса: Антон запостил анонс, репост в АССИСТ+, Радмир закинул в свой канал</li>
@@ -2704,7 +2622,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W23</th>
           <th>План W24</th>
           <th>Цель мая</th>
@@ -2712,14 +2630,12 @@
         <tbody>
           <tr>
             <td class="pname">Посты в ТГ (2/нед)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
             <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
             <td class="col-goal">2 поста/нед стабильно</td>
           </tr>
           <tr>
             <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
-            <td><span class="badge b-research">Go/no-go</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Открытая задача — думать над позиционированием/концепцией</li>
@@ -2728,7 +2644,6 @@
           </tr>
           <tr>
             <td class="pname">Международный форум<br>для детских садов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Узнали статус (ответили, что на связи, но не дали актуальный статус)</li>
             </ul></td>
@@ -2741,7 +2656,6 @@
           </tr>
           <tr>
             <td class="pname">Вова</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Запланировали зум</li>
             </ul></td>
@@ -2752,7 +2666,6 @@
           </tr>
           <tr>
             <td class="pname">Аудио: идея формата<br>(Вика/Дима/Вова)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Писали запрос Вике и Диме на зум</li>
             </ul></td>
@@ -2771,7 +2684,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W23</th>
           <th>План W24</th>
           <th>Цель мая</th>
@@ -2779,7 +2692,6 @@
         <tbody>
           <tr>
             <td class="pname">Наставничество</td>
-            <td><span class="badge b-pause">Пауза</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум</li>
             </ul></td>
@@ -2796,7 +2708,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W23</th>
           <th>План W24</th>
           <th>Цель мая</th>
@@ -2804,7 +2716,6 @@
         <tbody>
           <tr>
             <td class="pname">Составить портрет<br>Бизнес Ассистента</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Внесли корректировки и передали Наталье</li>
             </ul>
@@ -2817,7 +2728,6 @@
           </tr>
           <tr>
             <td class="pname">Составить портрет<br>Техпроджекта</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Внесли корректировки и передали Наталье</li>
             </ul>
@@ -2834,7 +2744,6 @@
 
           <tr>
             <td class="pname">Оцифровка<br>социального капитала</td>
-            <td><span class="badge b-wait">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Запустить работу</li>
@@ -2843,7 +2752,6 @@
           </tr>
           <tr>
             <td class="pname">Новое заявление<br>оператора персданных</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Обновить после публикации лендинга</li>
@@ -2852,7 +2760,6 @@
           </tr>
           <tr>
             <td class="pname">Лендинг-визитка</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Внесли корректировки</li>
             </ul>
@@ -2875,7 +2782,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W24</th>
           <th>План W25</th>
           <th>Цель июня</th>
@@ -2883,7 +2790,6 @@
         <tbody>
           <tr>
             <td class="pname">ГлобалДент</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Внесли все правки, обновили дизайн в веб-версии, обновили домен</li>
             </ul></td>
@@ -2895,7 +2801,6 @@
           </tr>
           <tr>
             <td class="pname">ГлобалДент:<br>сопровождение/доработка бота</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Трижды напоминали про оплату</li>
             </ul></td>
@@ -2906,7 +2811,6 @@
           </tr>
           <tr>
             <td class="pname">Алексей: проекты</td>
-            <td><span class="badge b-pause">Пауза / ожидание</span></td>
             <td class="col-fact"><ul class="li">
               <li>Запросили обратную связь</li>
             </ul></td>
@@ -2918,7 +2822,6 @@
           </tr>
           <tr>
             <td class="pname">Витя</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Оформление ИП в процессе</li>
             </ul></td>
@@ -2929,7 +2832,6 @@
           </tr>
           <tr>
             <td class="pname">Платформа<br>Благодарности</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Сделали сайт</li>
               <li>Получили оценку от Вити <a href="https://victorkalugin.notion.site/3785ccc94cc4803ba961df9b4a9db0e3?source=copy_link" target="_blank" class="open-btn" style="display:inline-block;padding:2px 10px;font-size:10px;margin-left:6px">Смотреть →</a></li>
@@ -2946,7 +2848,6 @@
           </tr>
           <tr>
             <td class="pname">Агора:<br>IT-предложение</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Актуализировать запрос к Ивану</li>
@@ -2956,7 +2857,6 @@
           </tr>
           <tr>
             <td class="pname">Вопрос: альтернативные<br>IT-специалисты</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Начала собирать сравнительную таблицу (готова на 60%)</li>
             </ul></td>
@@ -2968,7 +2868,6 @@
           </tr>
           <tr>
             <td class="pname">Deal / Мельников групп</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум, подготовили коммерческое предложение</li>
             </ul></td>
@@ -2979,7 +2878,6 @@
           </tr>
           <tr>
             <td class="pname">Шерпа</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Запросили обратную связь</li>
             </ul></td>
@@ -2990,7 +2888,6 @@
           </tr>
           <tr>
             <td class="pname">Кухни Москвы</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум, подготовили коммерческое предложение</li>
             </ul></td>
@@ -3002,7 +2899,6 @@
           </tr>
           <tr>
             <td class="pname">Предложение Кучменту</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум</li>
             </ul></td>
@@ -3014,7 +2910,6 @@
           </tr>
           <tr>
             <td class="pname">Synapt</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Собрали сайт</li>
             </ul></td>
@@ -3036,7 +2931,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W24</th>
           <th>План W25</th>
           <th>Цель</th>
@@ -3044,7 +2939,6 @@
         <tbody>
           <tr>
             <td class="pname">Курс ИИ для бизнеса</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Платформа под новый дизайн ✓</li>
               <li>Бот для оплаты 2 потока ✓</li>
@@ -3077,7 +2971,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Проект</th><th>Статус</th>
+          <th>Проект</th>
           <th>Факт W24</th>
           <th>План W25</th>
           <th>Цель</th>
@@ -3085,14 +2979,12 @@
         <tbody>
           <tr>
             <td class="pname">Посты в ТГ (2/нед)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li"><li>2 поста/нед ✓</li></ul></td>
             <td class="col-next"><ul class="li"><li>2 поста/нед</li></ul></td>
             <td class="col-goal">2 поста/нед стабильно</td>
           </tr>
           <tr>
             <td class="pname">Международный форум<br>для детских садов</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Актуализировали статус, получили ответ что на днях созвонятся с Айдой</li>
             </ul></td>
@@ -3103,7 +2995,6 @@
           </tr>
           <tr>
             <td class="pname">Вова</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум</li>
             </ul></td>
@@ -3112,7 +3003,6 @@
           </tr>
           <tr>
             <td class="pname">Фильм про создание<br>платформы (YouTube)</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Провели зум с Викой и Димой</li>
             </ul></td>
@@ -3124,7 +3014,6 @@
           </tr>
           <tr>
             <td class="pname">Таёжник</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Подготовили презентацию, собрали стратегию, сделали анализ и предложили референсы для дальнейшей работы</li>
               <li>Провели зум</li>
@@ -3146,7 +3035,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W24</th>
           <th>План W25</th>
           <th>Цель</th>
@@ -3154,7 +3043,6 @@
         <tbody>
           <tr>
             <td class="pname">Наставничество</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Вели коммуникацию с Мигелем</li>
             </ul></td>
@@ -3173,7 +3061,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача</th><th>Статус</th>
+          <th>Задача</th>
           <th>Факт W24</th>
           <th>План W25</th>
           <th>Цель</th>
@@ -3181,7 +3069,6 @@
         <tbody>
           <tr>
             <td class="pname">Составить портрет<br>Бизнес Ассистента</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Запустили поиск</li>
             </ul>
@@ -3195,7 +3082,6 @@
           </tr>
           <tr>
             <td class="pname">Составить портрет<br>Техпроджекта</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Прописали задачи, связанные с платформой</li>
               <li>Актуализировали запрос к Вите по дополнению портрета</li>
@@ -3210,7 +3096,6 @@
           </tr>
           <tr>
             <td class="pname">Лендинг-визитка</td>
-            <td><span class="badge b-active">В работе</span></td>
             <td class="col-fact"><ul class="li">
               <li>Внесли корректировки</li>
             </ul>
@@ -3231,7 +3116,7 @@
       <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Задача / Проект</th><th>Статус</th>
+          <th>Задача / Проект</th>
           <th>Факт W24</th>
           <th>Когда вернуться</th>
           <th>Цель</th>
@@ -3239,14 +3124,12 @@
         <tbody>
           <tr>
             <td class="pname">SHKOLA.APP</td>
-            <td><span class="badge b-pause">Заморожено</span></td>
             <td class="col-fact">—</td>
             <td class="col-next">—</td>
             <td class="col-goal">Подписание по 1 направлению<br>и/или монетизируемый контакт</td>
           </tr>
           <tr>
             <td class="pname">Лига плюща<br>(ФизтехСоюз)</td>
-            <td><span class="badge b-pause">Заморожено</span></td>
             <td class="col-fact"><ul class="li">
               <li>Пауза</li>
             </ul></td>
@@ -3257,7 +3140,6 @@
           </tr>
           <tr>
             <td class="pname">Evraz</td>
-            <td><span class="badge b-pause">Заморожено</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Вернуться в начале июля</li>
@@ -3266,7 +3148,6 @@
           </tr>
           <tr>
             <td class="pname">Hantico</td>
-            <td><span class="badge b-pause">Заморожено</span></td>
             <td class="col-fact"><ul class="li">
               <li>Получили обратную связь от Маргариты</li>
             </ul></td>
@@ -3277,7 +3158,6 @@
           </tr>
           <tr>
             <td class="pname">Международный МФТИ<br>(Межфизтех)</td>
-            <td><span class="badge b-pause">Заморожено</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Открытая задача — думать над позиционированием/концепцией</li>
@@ -3286,7 +3166,6 @@
           </tr>
           <tr>
             <td class="pname">Новое заявление<br>оператора персданных</td>
-            <td><span class="badge b-pause">Заморожено</span></td>
             <td class="col-fact">—</td>
             <td class="col-next"><ul class="li">
               <li>Обновить после публикации лендинга</li>
@@ -3295,7 +3174,6 @@
           </tr>
           <tr>
             <td class="pname">Оцифровка<br>социального капитала</td>
-            <td><span class="badge b-pause">Заморожено</span></td>
             <td class="col-fact">—</td>
             <td class="col-next">—</td>
             <td class="col-goal">Соцкапитал оцифрован</td>
