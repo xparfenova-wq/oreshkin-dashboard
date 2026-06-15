@@ -3205,7 +3205,7 @@
     localStorage.setItem('activeWeek', week);
   }
 
-  localStorage.setItem('activeWeek', 'w25');
+  switchTab(localStorage.getItem('activeWeek') || 'w25');
 </script>
 </body>
 </html>
