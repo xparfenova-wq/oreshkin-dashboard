@@ -3791,7 +3791,8 @@
     localStorage.setItem('activeWeek', week);
   }
 
-  switchTab(localStorage.getItem('activeWeek') || 'w26');
+  const _saved = localStorage.getItem('activeWeek');
+  switchTab((!_saved || _saved < 'w26') ? 'w26' : _saved);
 </script>
 </body>
 </html>
