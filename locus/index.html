@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Locus — Еженедельный дашборд</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --border: #e2ddd8;
+  --accent: #7c3aed;
+  --accent2: #0891b2;
+  --accent3: #d97706;
+  --text: #1a1a2e;
+  --muted: #78716c;
+  --green: #059669;
+  --red: #dc2626;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+body {
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-weight: 400;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* HEADER */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(248,247,244,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.week-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.week-pill:hover { background: #f0edf8; border-color: var(--accent); }
+.week-pill .week-range { font-weight: 400; color: var(--muted); font-size: 12px; }
+
+.week-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  min-width: 160px;
+  z-index: 200;
+  overflow: hidden;
+}
+.week-dropdown.open { display: block; }
+.week-dropdown-item {
+  padding: 9px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.1s;
+}
+.week-dropdown-item:hover { background: var(--bg); }
+.week-dropdown-item.active { color: var(--accent); font-weight: 600; }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.edit-badge {
+  background: #ede9fe;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.btn-outline {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-save { background: var(--surface); border-color: var(--border); color: var(--muted); }
+.btn-save.has-changes { background: #fef2f2; border-color: #fca5a5; color: var(--red); }
+.btn-save.saved { background: #ecfdf5; border-color: #6ee7b7; color: var(--green); }
+.btn-save:hover { border-color: var(--accent); color: var(--accent); background: #f0edf8; }
+
+/* EDIT BANNER */
+.edit-banner {
+  display: none;
+  background: #ede9fe;
+  border-bottom: 1px solid #c4b5fd;
+  padding: 8px 24px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  text-align: center;
+  position: relative;
+  z-index: 50;
+}
+.edit-mode .edit-banner { display: block; }
+
+/* PROGRESS STRIP */
+.progress-strip {
+  position: relative;
+  z-index: 1;
+  padding: 16px 24px 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.progress-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.progress-chip:hover { border-color: var(--accent); color: var(--accent); }
+.progress-chip .prog-bar-wrap {
+  width: 40px;
+  height: 3px;
+  background: #e2ddd8;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-chip .prog-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.progress-chip .prog-count { color: var(--text); font-weight: 600; }
+
+/* MAIN */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* DIRECTION CARD */
+.direction-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow 0.15s ease;
+}
+.direction-card:hover { box-shadow: var(--shadow-md); }
+
+.direction-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: background 0.15s ease;
+}
+.direction-header:hover { background: rgba(124,58,237,0.02); }
+.direction-card.open .direction-header { border-bottom-color: var(--border); }
+
+.dir-emoji { font-size: 18px; flex-shrink: 0; }
+.dir-label { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; }
+.dir-progress-pill {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.dir-progress-pill.all-done { background: #ecfdf5; border-color: #6ee7b7; color: var(--green); }
+.dir-collapse-arrow {
+  color: var(--muted);
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.direction-card.open .dir-collapse-arrow { transform: rotate(180deg); }
+
+.direction-body { display: none; }
+.direction-card.open .direction-body { display: block; }
+
+/* PROJECT GROUP */
+.project-group { padding: 0 18px 14px; }
+.project-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 12px 0 6px;
+}
+
+/* TASK ROW */
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  border-left: 3px solid transparent;
+  margin-bottom: 2px;
+  min-height: 38px;
+}
+.task-row:hover {
+  background: rgba(124,58,237,0.03);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.task-row.status-inprogress { border-left-color: var(--accent2); }
+.task-row.status-done { opacity: 0.6; }
+.task-row.status-delayed { border-left-color: var(--accent3); }
+
+.status-badge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.12s ease;
+  white-space: nowrap;
+  min-width: 78px;
+  text-align: center;
+}
+.status-badge:active { transform: scale(0.94); }
+.status-badge.todo { background: #f4f4f5; color: #71717a; border: 1px solid #e4e4e7; }
+.status-badge.inprogress { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.status-badge.done { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.status-badge.delayed { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+.task-title {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--text);
+  min-width: 0;
+}
+.status-done .task-title { text-decoration: line-through; color: var(--muted); }
+
+[contenteditable="true"] {
+  outline: none;
+  border-radius: 4px;
+  padding: 1px 4px;
+  transition: background 0.1s;
+}
+[contenteditable="true"]:focus {
+  background: #f0edf8;
+  box-shadow: 0 0 0 2px rgba(124,58,237,0.2);
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ASSIGNEE CHIP */
+.assignee-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 20px;
+  padding: 2px 7px 2px 2px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: default;
+  transition: all 0.12s ease;
+}
+.assignee-chip.clickable { cursor: pointer; }
+.assignee-chip.clickable:hover { filter: brightness(0.92); }
+.assignee-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* DEADLINE CHIP */
+.deadline-chip {
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: default;
+}
+.deadline-chip.future { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.deadline-chip.soon { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.deadline-chip.overdue { background: #fef2f2; color: var(--red); border: 1px solid #fca5a5; }
+.deadline-chip.clickable { cursor: pointer; }
+.deadline-chip.clickable:hover { filter: brightness(0.92); }
+
+/* CARRY-OVER BADGE */
+.carryover-badge {
+  padding: 2px 6px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  white-space: nowrap;
+}
+
+/* EDIT CONTROLS */
+.task-edit-controls {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.edit-mode .task-edit-controls { display: flex; }
+
+.btn-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.12s ease;
+  font-family: inherit;
+}
+.btn-icon:hover { border-color: var(--red); color: var(--red); background: #fef2f2; }
+
+/* ADD TASK */
+.add-task-row {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+}
+.edit-mode .add-task-row { display: flex; }
+
+.btn-add-task {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+.btn-add-task:hover { border-color: var(--accent); color: var(--accent); background: rgba(124,58,237,0.03); }
+
+/* ASSIGNEE DROPDOWN */
+.assignee-dropdown-wrap { position: relative; }
+.assignee-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  z-index: 300;
+  min-width: 140px;
+  overflow: hidden;
+}
+.assignee-dropdown.open { display: block; }
+.assignee-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+  color: var(--text);
+}
+.assignee-dropdown-item:hover { background: var(--bg); }
+
+/* EXPORT MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  max-width: 560px;
+  width: 90%;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.modal-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  background: #f8f7f4;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-family: 'Menlo', 'Monaco', monospace;
+  font-size: 11px;
+  color: var(--text);
+  white-space: pre;
+  line-height: 1.6;
+  border: 1px solid var(--border);
+}
+.modal-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.btn-primary:hover { background: #6d28d9; }
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FOOTER */
+.footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 20px 24px 32px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--text);
+  color: white;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 600;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 640px) {
+  .header { padding: 0 14px; }
+  .main { padding: 14px 14px 50px; }
+  .progress-strip { padding: 12px 14px 0; }
+  .task-row { flex-wrap: wrap; gap: 5px; }
+  .task-meta { width: 100%; justify-content: flex-end; padding-left: 86px; }
+}
+</style>
+</head>
+<body>
+
+<div class="edit-banner">Режим редактирования · изменения сохраняются локально</div>
+
+<header class="header">
+  <div class="header-logo">LOCUS</div>
+  <div class="header-center">
+    <div class="week-pill" id="weekPill" onclick="toggleWeekDropdown()">
+      <span id="weekLabel">W26</span>
+      <span class="week-range" id="weekRange">22–28 июня</span>
+      <span>▾</span>
+      <div class="week-dropdown" id="weekDropdown"></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="edit-badge" id="editBadge" style="display:none">Ред. режим</span>
+    <button class="btn btn-save" id="saveBtn" onclick="manualSave()">
+      <span id="saveBtnIcon">●</span> Сохранить
+    </button>
+    <button class="btn btn-outline" onclick="exportJSON()">↗ Экспорт JSON</button>
+  </div>
+</header>
+
+<div class="progress-strip" id="progressStrip"></div>
+
+<main class="main" id="main"></main>
+
+<footer class="footer">Locus · Ксения Парфёнова · 2026</footer>
+
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <div class="modal-title">Экспорт данных (JSON)</div>
+    <div class="modal-body" id="exportModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeExportModal()">Закрыть</button>
+      <button class="btn-primary" onclick="copyExportJSON()">Скопировать</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── TEAM ROSTER ───────────────────────────────────────────────────
+const TEAM = [
+  { name: "Ксения",  initials: "Кс", color: "#7c3aed" },
+  { name: "Антон",   initials: "Ан", color: "#0891b2" },
+  { name: "Никита",  initials: "Ни", color: "#059669" },
+  { name: "Гоша",    initials: "Го", color: "#d97706" },
+  { name: "Маша",    initials: "Ма", color: "#db2777" },
+  { name: "Алисия",  initials: "Ал", color: "#7c3aed" },
+  { name: "Олеся",   initials: "Ол", color: "#0891b2" },
+  { name: "Вика",    initials: "Ви", color: "#dc2626" },
+  { name: "Дима",    initials: "Ди", color: "#059669" },
+  { name: "Витя",    initials: "Вт", color: "#b45309" },
+];
+const TEAM_MAP = Object.fromEntries(TEAM.map(t => [t.name, t]));
+function teamInfo(name) { return TEAM_MAP[name] || { name, initials: (name||'?').slice(0,2), color: '#78716c' }; }
+
+// ─── STATUS CYCLE ──────────────────────────────────────────────────
+const STATUS_CYCLE = ['todo', 'inprogress', 'done', 'delayed'];
+const STATUS_LABELS = { todo: 'К работе', inprogress: 'В процессе', done: 'Готово', delayed: '↩ Перенос' };
+
+// ─── SEED DATA ─────────────────────────────────────────────────────
+const SEED_DATA = {
+  currentWeek: "W26",
+  weeks: {
+    "W26": {
+      label: "W26 · текущая",
+      dateRange: "22–28 июня",
+      directions: [
+        {
+          id: "it",
+          label: "IT-проекты",
+          emoji: "💻",
+          projects: [
+            {
+              id: "platform",
+              title: "Платформа благодарности",
+              tasks: [
+                { id: "t_p1",  title: "Получить обновлённую оценку от Вити",           assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p2",  title: "Обновить блок в презентации для Виктора",        assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p3",  title: "Зафиксировать форматы поддержки",                assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p4",  title: "Начать работу по обновлению юридической модели", assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p5",  title: "Запланировать встречу с Виктором",               assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p6",  title: "Внести правки в презентацию для Сколково",       assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p7",  title: "Дать Маше доступ к курсу",                       assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p8",  title: "Отправить Маше записи кастдевов",                assignee: "Ксения", deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p9",  title: "Провести повторный Zoom с Машей",                assignee: "Маша",   deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p10", title: "Получить от Маши расписание по Овчинкину",       assignee: "Маша",   deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p11", title: "Связаться со студентами для формирования команды", assignee: "Ксения", deadline: "2026-06-28", status: "todo",  rolledOverFrom: null },
+                { id: "t_p12", title: "Внести правки в видео",                          assignee: "Вика",   deadline: "2026-06-28", status: "todo",    rolledOverFrom: null },
+                { id: "t_p13", title: "Сделали презентацию для Сколково",               assignee: "Ксения", deadline: "2026-06-28", status: "done",    rolledOverFrom: null },
+                { id: "t_p14", title: "Обновили прототипы веб и мобильной версии",      assignee: "Ксения", deadline: "2026-06-28", status: "done",    rolledOverFrom: null },
+                { id: "t_p15", title: "Провели Zoom с Машей",                           assignee: "Ксения", deadline: "2026-06-28", status: "done",    rolledOverFrom: null },
+                { id: "t_p16", title: "Отправили Маше материалы",                       assignee: "Ксения", deadline: "2026-06-28", status: "done",    rolledOverFrom: null },
+              ]
+            },
+            {
+              id: "globaldent",
+              title: "GlobalDent",
+              tasks: [
+                { id: "t_g1",  title: "Подготовить предложение", assignee: "Никита", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            },
+            {
+              id: "vitya",
+              title: "Витя Калугин",
+              tasks: [
+                { id: "t_v1",  title: "Получить обновлённую оценку", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            }
+          ]
+        },
+        {
+          id: "automy",
+          label: "AUTOMY AI",
+          emoji: "🤖",
+          projects: [
+            {
+              id: "stream2",
+              title: "2 поток",
+              tasks: [
+                { id: "t_a1", title: "2 ролика в Instagram",         assignee: "Алисия", deadline: "2026-06-24", status: "todo", rolledOverFrom: null },
+                { id: "t_a2", title: "2 ролика",                     assignee: "Гоша",   deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_a3", title: "Записать 2 модуль 2 потока",   assignee: "Никита", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_a4", title: "Зафиналить сайт Synapt",       assignee: "Никита", deadline: "2026-06-30", status: "todo", rolledOverFrom: null },
+                { id: "t_a5", title: "Переделать P&L таблички",      assignee: "Никита", deadline: "2026-06-30", status: "todo", rolledOverFrom: null },
+                { id: "t_a6", title: "Провели вступительный эфир",   assignee: "Ксения", deadline: "2026-06-28", status: "done", rolledOverFrom: null },
+                { id: "t_a7", title: "Запустили 2 поток",            assignee: "Ксения", deadline: "2026-06-28", status: "done", rolledOverFrom: null },
+                { id: "t_a8", title: "КП для Equium",                assignee: "Ксения", deadline: "2026-06-28", status: "done", rolledOverFrom: null },
+                { id: "t_a9", title: "Созвон с Авангардом",          assignee: "Ксения", deadline: "2026-06-28", status: "done", rolledOverFrom: null },
+              ]
+            }
+          ]
+        },
+        {
+          id: "media",
+          label: "Медиа",
+          emoji: "🎬",
+          projects: [
+            {
+              id: "medialab",
+              title: "Oreshkin Media Lab",
+              tasks: [
+                { id: "t_m1", title: "Задача (нажми ред. режим чтобы заполнить)", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_m2", title: "Задача",                                    assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_m3", title: "Задача",                                    assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            }
+          ]
+        },
+        {
+          id: "mentor",
+          label: "Наставничество",
+          emoji: "🎓",
+          projects: [
+            {
+              id: "courses",
+              title: "Курс / Менторство",
+              tasks: [
+                { id: "t_men1", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_men2", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            }
+          ]
+        },
+        {
+          id: "assist",
+          label: "АССИСТ+",
+          emoji: "👥",
+          projects: [
+            {
+              id: "hr",
+              title: "HR-партнёрство",
+              tasks: [
+                { id: "t_hr1", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_hr2", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            }
+          ]
+        },
+        {
+          id: "ops",
+          label: "Внутренняя оптимизация",
+          emoji: "⚙️",
+          projects: [
+            {
+              id: "operations",
+              title: "Операционка",
+              tasks: [
+                { id: "t_op1", title: "Оптимизация финансовых таблиц",           assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_op2", title: "Стандартизация КП",                        assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_op3", title: "Олеся – определить дальнейший план действий", assignee: "Олеся", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            }
+          ]
+        },
+        {
+          id: "backlog",
+          label: "Бэклог",
+          emoji: "📋",
+          projects: [
+            {
+              id: "ideas",
+              title: "Идеи и задачи",
+              tasks: [
+                { id: "t_b1", title: "Никита Соин – рассмотреть как потенциального партнёра", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+};
+
+// ─── STATE ─────────────────────────────────────────────────────────
+let appData = null;
+let hasUnsaved = false;
+let isEditMode = false;
+let _exportJson = '';
+
+// ─── INIT ──────────────────────────────────────────────────────────
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  isEditMode = params.get('edit') === '1';
+  if (isEditMode) document.body.classList.add('edit-mode');
+  document.getElementById('editBadge').style.display = isEditMode ? 'flex' : 'none';
+
+  // Load from localStorage or seed
+  const stored = localStorage.getItem('locus-data');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      appData = mergeData(SEED_DATA, parsed);
+    } catch(e) {
+      appData = JSON.parse(JSON.stringify(SEED_DATA));
+    }
+  } else {
+    appData = JSON.parse(JSON.stringify(SEED_DATA));
+  }
+
+  buildWeekDropdown();
+  renderAll();
+  startAutoSave();
+}
+
+function mergeData(base, stored) {
+  // stored wins for task statuses; base wins for structure (new tasks)
+  const merged = JSON.parse(JSON.stringify(base));
+  if (!stored || !stored.weeks) return merged;
+
+  // update currentWeek if stored has one
+  if (stored.currentWeek) merged.currentWeek = stored.currentWeek;
+
+  // merge task statuses from stored into base
+  for (const weekKey in stored.weeks) {
+    if (!merged.weeks[weekKey]) {
+      merged.weeks[weekKey] = stored.weeks[weekKey];
+      continue;
+    }
+    const storedWeek = stored.weeks[weekKey];
+    const mergedWeek = merged.weeks[weekKey];
+
+    // Build stored task map
+    const storedTaskMap = {};
+    (storedWeek.directions || []).forEach(d => {
+      (d.projects || []).forEach(p => {
+        (p.tasks || []).forEach(t => { storedTaskMap[t.id] = t; });
+      });
+    });
+
+    // Apply stored statuses to merged tasks
+    mergedWeek.directions.forEach(d => {
+      d.projects.forEach(p => {
+        // Add any stored tasks not in base (user-added tasks)
+        const storedDir = storedWeek.directions.find(sd => sd.id === d.id);
+        if (storedDir) {
+          const storedProj = storedDir.projects.find(sp => sp.id === p.id);
+          if (storedProj) {
+            const baseTaskIds = new Set(p.tasks.map(t => t.id));
+            storedProj.tasks.forEach(st => {
+              if (!baseTaskIds.has(st.id)) {
+                p.tasks.push(st);
+              }
+            });
+          }
+        }
+        p.tasks.forEach(t => {
+          if (storedTaskMap[t.id]) {
+            t.status = storedTaskMap[t.id].status;
+            t.title = storedTaskMap[t.id].title;
+            t.assignee = storedTaskMap[t.id].assignee;
+            t.deadline = storedTaskMap[t.id].deadline;
+            t.rolledOverFrom = storedTaskMap[t.id].rolledOverFrom;
+          }
+        });
+      });
+    });
+  }
+  return merged;
+}
+
+// ─── RENDER ────────────────────────────────────────────────────────
+function renderAll() {
+  const weekKey = appData.currentWeek;
+  const week = appData.weeks[weekKey];
+  if (!week) return;
+
+  document.getElementById('weekLabel').textContent = weekKey;
+  document.getElementById('weekRange').textContent = week.dateRange;
+
+  renderProgressStrip(week);
+  renderDirections(week);
+  updateSaveBtn();
+}
+
+function renderProgressStrip(week) {
+  const strip = document.getElementById('progressStrip');
+  strip.innerHTML = '';
+  week.directions.forEach(dir => {
+    const allTasks = dir.projects.flatMap(p => p.tasks);
+    const done = allTasks.filter(t => t.status === 'done').length;
+    const total = allTasks.length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    const chip = document.createElement('div');
+    chip.className = 'progress-chip';
+    chip.onclick = () => scrollToDir(dir.id);
+    chip.innerHTML = `
+      <span>${dir.emoji}</span>
+      <span>${dir.label.split(' ')[0]}</span>
+      <div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+      <span class="prog-count">${done}/${total}</span>
+    `;
+    strip.appendChild(chip);
+  });
+}
+
+function scrollToDir(id) {
+  const el = document.getElementById('dir-' + id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderDirections(week) {
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  week.directions.forEach(dir => {
+    const card = buildDirectionCard(dir);
+    main.appendChild(card);
+  });
+}
+
+function buildDirectionCard(dir) {
+  const allTasks = dir.projects.flatMap(p => p.tasks);
+  const done = allTasks.filter(t => t.status === 'done').length;
+  const total = allTasks.length;
+
+  const card = document.createElement('div');
+  card.className = 'direction-card open';
+  card.id = 'dir-' + dir.id;
+
+  const pillClass = done === total && total > 0 ? 'dir-progress-pill all-done' : 'dir-progress-pill';
+
+  card.innerHTML = `
+    <div class="direction-header" onclick="toggleDir('${dir.id}')">
+      <span class="dir-emoji">${dir.emoji}</span>
+      <span class="dir-label">${dir.label}</span>
+      <span class="${pillClass}" id="pill-${dir.id}">${done}/${total}</span>
+      <span class="dir-collapse-arrow">▾</span>
+    </div>
+    <div class="direction-body" id="body-${dir.id}"></div>
+  `;
+
+  const body = card.querySelector('.direction-body');
+  dir.projects.forEach(proj => {
+    body.appendChild(buildProjectGroup(dir, proj));
+  });
+
+  return card;
+}
+
+function buildProjectGroup(dir, proj) {
+  const group = document.createElement('div');
+  group.className = 'project-group';
+  group.id = `proj-${dir.id}-${proj.id}`;
+
+  const titleEl = document.createElement('div');
+  titleEl.className = 'project-title';
+  titleEl.textContent = proj.title;
+  group.appendChild(titleEl);
+
+  const tasksList = document.createElement('div');
+  tasksList.id = `tasks-${dir.id}-${proj.id}`;
+  proj.tasks.forEach(task => {
+    tasksList.appendChild(buildTaskRow(dir, proj, task));
+  });
+  group.appendChild(tasksList);
+
+  const addRow = document.createElement('div');
+  addRow.className = 'add-task-row';
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn-add-task';
+  addBtn.textContent = '+ Добавить задачу';
+  addBtn.onclick = () => addTask(dir, proj);
+  addRow.appendChild(addBtn);
+  group.appendChild(addRow);
+
+  return group;
+}
+
+function buildTaskRow(dir, proj, task) {
+  const row = document.createElement('div');
+  row.className = `task-row status-${task.status}`;
+  row.id = `task-${task.id}`;
+
+  // Status badge
+  const badge = document.createElement('div');
+  badge.className = `status-badge ${task.status}`;
+  let badgeLabel = STATUS_LABELS[task.status];
+  if (task.status === 'delayed' && task.rolledOverFrom) badgeLabel = `↩ с&nbsp;${task.rolledOverFrom}`;
+  badge.innerHTML = badgeLabel;
+  badge.onclick = () => cycleStatus(dir, proj, task);
+  row.appendChild(badge);
+
+  // Title
+  const titleEl = document.createElement('div');
+  titleEl.className = 'task-title';
+  titleEl.textContent = task.title;
+  if (isEditMode) {
+    titleEl.contentEditable = 'true';
+    titleEl.onblur = () => {
+      task.title = titleEl.textContent.trim();
+      markUnsaved();
+    };
+  }
+  row.appendChild(titleEl);
+
+  // Meta
+  const meta = document.createElement('div');
+  meta.className = 'task-meta';
+
+  // Carry-over badge
+  if (task.rolledOverFrom) {
+    const co = document.createElement('span');
+    co.className = 'carryover-badge';
+    co.textContent = `с ${task.rolledOverFrom}`;
+    meta.appendChild(co);
+  }
+
+  // Assignee
+  const ti = teamInfo(task.assignee);
+  const assigneeWrap = document.createElement('div');
+  assigneeWrap.className = 'assignee-dropdown-wrap';
+  const assigneeChip = document.createElement('div');
+  assigneeChip.className = isEditMode ? 'assignee-chip clickable' : 'assignee-chip';
+  assigneeChip.style.background = ti.color + '18';
+  assigneeChip.style.color = ti.color;
+  assigneeChip.style.border = `1px solid ${ti.color}30`;
+  assigneeChip.innerHTML = `<span class="assignee-avatar" style="background:${ti.color}">${ti.initials}</span>${ti.name}`;
+
+  if (isEditMode) {
+    const dropdown = buildAssigneeDropdown(dir, proj, task, assigneeWrap, assigneeChip);
+    assigneeWrap.appendChild(assigneeChip);
+    assigneeWrap.appendChild(dropdown);
+    assigneeChip.onclick = (e) => { e.stopPropagation(); toggleAssigneeDropdown(dropdown); };
+  } else {
+    assigneeWrap.appendChild(assigneeChip);
+  }
+  meta.appendChild(assigneeWrap);
+
+  // Deadline
+  if (task.deadline) {
+    const dl = document.createElement('div');
+    dl.className = 'deadline-chip ' + deadlineClass(task.deadline);
+    if (isEditMode) dl.classList.add('clickable');
+    dl.textContent = formatDeadline(task.deadline);
+    if (isEditMode) {
+      dl.onclick = () => {
+        const val = prompt('Дедлайн (YYYY-MM-DD):', task.deadline);
+        if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+          task.deadline = val;
+          markUnsaved();
+          rerenderTask(dir, proj, task);
+        }
+      };
+    }
+    meta.appendChild(dl);
+  }
+
+  row.appendChild(meta);
+
+  // Edit controls
+  const editControls = document.createElement('div');
+  editControls.className = 'task-edit-controls';
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn-icon';
+  delBtn.title = 'Удалить';
+  delBtn.textContent = '✕';
+  delBtn.onclick = () => deleteTask(dir, proj, task);
+  editControls.appendChild(delBtn);
+  row.appendChild(editControls);
+
+  return row;
+}
+
+function buildAssigneeDropdown(dir, proj, task, wrap, chip) {
+  const dropdown = document.createElement('div');
+  dropdown.className = 'assignee-dropdown';
+  TEAM.forEach(member => {
+    const item = document.createElement('div');
+    item.className = 'assignee-dropdown-item';
+    const t = teamInfo(member.name);
+    item.innerHTML = `<span class="assignee-avatar" style="background:${t.color}">${t.initials}</span>${member.name}`;
+    item.onclick = (e) => {
+      e.stopPropagation();
+      task.assignee = member.name;
+      markUnsaved();
+      dropdown.classList.remove('open');
+      // Update chip
+      const nt = teamInfo(member.name);
+      chip.style.background = nt.color + '18';
+      chip.style.color = nt.color;
+      chip.style.border = `1px solid ${nt.color}30`;
+      chip.innerHTML = `<span class="assignee-avatar" style="background:${nt.color}">${nt.initials}</span>${nt.name}`;
+      updatePill(dir);
+    };
+    dropdown.appendChild(item);
+  });
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!wrap.contains(e.target)) dropdown.classList.remove('open');
+  }, { once: false });
+  return dropdown;
+}
+
+function toggleAssigneeDropdown(dropdown) {
+  document.querySelectorAll('.assignee-dropdown.open').forEach(d => {
+    if (d !== dropdown) d.classList.remove('open');
+  });
+  dropdown.classList.toggle('open');
+}
+
+// ─── STATUS CYCLE ──────────────────────────────────────────────────
+function cycleStatus(dir, proj, task) {
+  const idx = STATUS_CYCLE.indexOf(task.status);
+  task.status = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+  markUnsaved();
+  rerenderTask(dir, proj, task);
+  updatePill(dir);
+  renderProgressStrip(appData.weeks[appData.currentWeek]);
+}
+
+function rerenderTask(dir, proj, task) {
+  const existing = document.getElementById('task-' + task.id);
+  if (existing) {
+    const newRow = buildTaskRow(dir, proj, task);
+    existing.replaceWith(newRow);
+  }
+}
+
+function updatePill(dir) {
+  const allTasks = dir.projects.flatMap(p => p.tasks);
+  const done = allTasks.filter(t => t.status === 'done').length;
+  const total = allTasks.length;
+  const pill = document.getElementById('pill-' + dir.id);
+  if (pill) {
+    pill.textContent = `${done}/${total}`;
+    pill.className = done === total && total > 0 ? 'dir-progress-pill all-done' : 'dir-progress-pill';
+  }
+}
+
+// ─── ADD / DELETE ──────────────────────────────────────────────────
+function addTask(dir, proj) {
+  const id = 'task_' + Date.now();
+  const task = { id, title: 'Новая задача', assignee: 'Ксения', deadline: '2026-06-28', status: 'todo', rolledOverFrom: null };
+  proj.tasks.push(task);
+  markUnsaved();
+
+  const list = document.getElementById(`tasks-${dir.id}-${proj.id}`);
+  if (list) {
+    const row = buildTaskRow(dir, proj, task);
+    list.appendChild(row);
+    // Focus title
+    const titleEl = row.querySelector('.task-title');
+    if (titleEl) { titleEl.focus(); document.execCommand('selectAll'); }
+  }
+  updatePill(dir);
+  renderProgressStrip(appData.weeks[appData.currentWeek]);
+}
+
+function deleteTask(dir, proj, task) {
+  if (!confirm(`Удалить задачу «${task.title}»?`)) return;
+  proj.tasks = proj.tasks.filter(t => t.id !== task.id);
+  markUnsaved();
+  const row = document.getElementById('task-' + task.id);
+  if (row) row.remove();
+  updatePill(dir);
+  renderProgressStrip(appData.weeks[appData.currentWeek]);
+}
+
+// ─── DIRECTION COLLAPSE ────────────────────────────────────────────
+function toggleDir(id) {
+  const card = document.getElementById('dir-' + id);
+  if (card) card.classList.toggle('open');
+}
+
+// ─── WEEK NAVIGATION ───────────────────────────────────────────────
+function buildWeekDropdown() {
+  const dd = document.getElementById('weekDropdown');
+  dd.innerHTML = '';
+  Object.keys(appData.weeks).forEach(key => {
+    const week = appData.weeks[key];
+    const item = document.createElement('div');
+    item.className = 'week-dropdown-item' + (key === appData.currentWeek ? ' active' : '');
+    item.textContent = week.label;
+    item.onclick = (e) => { e.stopPropagation(); switchWeek(key); };
+    dd.appendChild(item);
+  });
+}
+
+function toggleWeekDropdown() {
+  document.getElementById('weekDropdown').classList.toggle('open');
+}
+
+function switchWeek(key) {
+  appData.currentWeek = key;
+  document.getElementById('weekDropdown').classList.remove('open');
+  renderAll();
+  markUnsaved();
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', (e) => {
+  const pill = document.getElementById('weekPill');
+  if (!pill.contains(e.target)) {
+    document.getElementById('weekDropdown').classList.remove('open');
+  }
+});
+
+// ─── DEADLINE HELPERS ──────────────────────────────────────────────
+function deadlineClass(dateStr) {
+  if (!dateStr) return 'future';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dl = new Date(dateStr); dl.setHours(0,0,0,0);
+  const diff = Math.round((dl - today) / 86400000);
+  if (diff < 0) return 'overdue';
+  if (diff <= 3) return 'soon';
+  return 'future';
+}
+
+function formatDeadline(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  return `${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+// ─── SAVE & AUTOSAVE ───────────────────────────────────────────────
+function markUnsaved() {
+  hasUnsaved = true;
+  updateSaveBtn();
+}
+
+function updateSaveBtn() {
+  const btn = document.getElementById('saveBtn');
+  if (hasUnsaved) {
+    btn.className = 'btn btn-save has-changes';
+    btn.innerHTML = '<span style="color:var(--red)">●</span> Несохранённые изменения';
+  } else {
+    btn.className = 'btn btn-save';
+    btn.innerHTML = '● Сохранено';
+  }
+}
+
+function manualSave() {
+  localStorage.setItem('locus-data', JSON.stringify(appData));
+  hasUnsaved = false;
+  const btn = document.getElementById('saveBtn');
+  btn.className = 'btn btn-save saved';
+  btn.innerHTML = '✓ Сохранено';
+  setTimeout(() => updateSaveBtn(), 2000);
+  showToast('Сохранено');
+}
+
+function startAutoSave() {
+  setInterval(() => {
+    const current = JSON.stringify(appData);
+    const saved = localStorage.getItem('locus-data');
+    if (current !== saved) {
+      localStorage.setItem('locus-data', current);
+      // Don't clear hasUnsaved — user still needs to see the indicator
+    }
+  }, 30000);
+}
+
+// ─── EXPORT JSON ───────────────────────────────────────────────────
+function exportJSON() {
+  _exportJson = JSON.stringify(appData, null, 2);
+  document.getElementById('exportModalBody').textContent = _exportJson;
+  document.getElementById('exportModal').classList.add('open');
+}
+
+function closeExportModal() {
+  document.getElementById('exportModal').classList.remove('open');
+}
+
+function copyExportJSON() {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(_exportJson).then(() => {
+      showToast('JSON скопирован в буфер');
+      closeExportModal();
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = _exportJson;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    showToast('JSON скопирован');
+    closeExportModal();
+  }
+}
+
+document.getElementById('exportModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('exportModal')) closeExportModal();
+});
+
+// ─── TOAST ─────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── START ─────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
