@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Платформа благодарности — трекер</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #074575;
+  --navy-mid: #0a5c9e;
+  --blue: #00a0e3;
+  --blue-light: #e8f5fd;
+  --cream: #fdf8f0;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --border: #e2e6eb;
+  --border-strong: #c8d0da;
+  --text: #111827;
+  --text-mid: #374151;
+  --muted: #6b7280;
+  --navy-bg: #f0f5fb;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+  --shadow-card: 0 2px 8px rgba(7,69,117,.08);
+  --font: 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --tag-done: #d1fae5;
+  --tag-done-text: #065f46;
+  --tag-in: #fef3c7;
+  --tag-in-text: #92400e;
+  --tag-todo: #f3f4f6;
+  --tag-todo-text: #4b5563;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header-wrap {
+  background: var(--navy);
+  padding: 0 24px 32px;
+}
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 16px 0 24px;
+  letter-spacing: 0;
+  transition: color .15s;
+}
+.back-btn:hover { color: rgba(255,255,255,.9); }
+.back-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.header-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 10px;
+}
+h1 {
+  font-size: clamp(26px, 4vw, 42px);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+.header-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.55);
+  max-width: 560px;
+}
+
+/* LAYOUT */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* SECTION TITLE */
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* MATERIALS GRID */
+.materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.mat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+  box-shadow: var(--shadow);
+}
+.mat-card:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-1px);
+}
+.mat-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+.mat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.mat-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* TRACKER TABLE */
+.tracker-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.tracker-head {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.tracker-week-badge {
+  background: var(--navy);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: .04em;
+}
+.tracker-dates {
+  font-size: 13px;
+  color: var(--muted);
+}
+.tracker-subtitle {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 600;
+}
+
+table.tracker-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table.tracker-table th {
+  padding: 10px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: #fafbfc;
+  border-bottom: 1px solid var(--border);
+}
+table.tracker-table td {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text-mid);
+  border-bottom: 1px solid #f0f2f5;
+  vertical-align: top;
+}
+table.tracker-table tr:last-child td { border-bottom: none; }
+table.tracker-table tr:hover td { background: #fafbfc; }
+
+td.task-name { color: var(--text); font-weight: 500; }
+td.executor {
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+.exec-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--navy-bg);
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+}
+
+/* HISTORY */
+.history-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hist-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.hist-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .12s;
+}
+.hist-header:hover { background: #fafbfc; }
+.hist-week {
+  background: var(--navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  min-width: 36px;
+  text-align: center;
+}
+.hist-dates-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.hist-dates-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 2px;
+}
+.hist-arrow {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
+  transition: transform .2s;
+}
+.hist-item.open .hist-arrow { transform: rotate(180deg); }
+
+.hist-body {
+  display: none;
+  padding: 0 20px 18px;
+  border-top: 1px solid var(--border);
+}
+.hist-item.open .hist-body { display: block; }
+
+.hist-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+@media (max-width: 640px) { .hist-cols { grid-template-columns: 1fr; gap: 16px; } }
+
+.hist-col-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.hist-col-title.fact { color: #065f46; }
+.hist-col-title.plan { color: #1e40af; }
+
+.hist-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hist-list li {
+  font-size: 13.5px;
+  color: var(--text-mid);
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.45;
+}
+.hist-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.hist-list.fact li::before { background: #34d399; }
+.hist-list.plan li::before { background: #60a5fa; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .materials-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .header-wrap { padding: 0 16px 28px; }
+  .page { padding: 24px 16px 60px; }
+  table.tracker-table th, table.tracker-table td { padding: 10px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header-wrap">
+  <div class="header-inner">
+    <a href="2026-май-dashboard.html" class="back-btn">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+      Общий дашборд
+    </a>
+    <div class="header-kicker">Физтех-Союз · МФТИ</div>
+    <h1>Платформа благодарности<br>преподавателям</h1>
+    <p class="header-sub">Цифровая инфраструктура для адресной поддержки преподавателей через выпускников</p>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- MATERIALS -->
+  <section>
+    <div class="section-title">Закреплённые материалы</div>
+    <div class="materials-grid">
+
+      <a class="mat-card" href="https://phystech-thanks.vercel.app" target="_blank">
+        <div class="mat-icon">🌐</div>
+        <div class="mat-label">Ознакомительный лендинг</div>
+        <div class="mat-desc">phystech-thanks.vercel.app</div>
+      </a>
+
+      <a class="mat-card" href="https://phystech-donat.vercel.app" target="_blank">
+        <div class="mat-icon">📱</div>
+        <div class="mat-label">Мобильная версия прототипа</div>
+        <div class="mat-desc">phystech-donat.vercel.app</div>
+      </a>
+
+      <a class="mat-card" href="https://phystech-donat.vercel.app/web/" target="_blank">
+        <div class="mat-icon">🖥</div>
+        <div class="mat-label">Веб-версия прототипа</div>
+        <div class="mat-desc">phystech-donat.vercel.app/web/</div>
+      </a>
+
+      <a class="mat-card" href="https://phystech-donat.vercel.app/pitch-0206.html" target="_blank">
+        <div class="mat-icon">📊</div>
+        <div class="mat-label">Презентация Виктору 1</div>
+        <div class="mat-desc">02 июня 2026</div>
+      </a>
+
+      <a class="mat-card" href="https://phystech-donat.vercel.app/pitch.html" target="_blank">
+        <div class="mat-icon">📊</div>
+        <div class="mat-label">Презентация Виктору 2</div>
+        <div class="mat-desc">Июнь 2026, обновлённая</div>
+      </a>
+
+      <a class="mat-card" href="https://victorkalugin.notion.site/3785ccc94cc4803ba961df9b4a9db0e3" target="_blank">
+        <div class="mat-icon">🧮</div>
+        <div class="mat-label">Расчёт от Вити</div>
+        <div class="mat-desc">Notion · Виктор Калугин</div>
+      </a>
+
+      <a class="mat-card" href="https://platforma-pitch.vercel.app" target="_blank">
+        <div class="mat-icon">🎓</div>
+        <div class="mat-label">Обзорный питч (Сколково)</div>
+        <div class="mat-desc">platforma-pitch.vercel.app</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- W26 TRACKER -->
+  <section>
+    <div class="section-title">Трекер задач — W26</div>
+    <div class="tracker-card">
+      <div class="tracker-head">
+        <span class="tracker-week-badge">W26</span>
+        <span class="tracker-dates">22–28 июня 2026</span>
+        <span class="tracker-subtitle">текущая неделя</span>
+      </div>
+      <table class="tracker-table">
+        <thead>
+          <tr>
+            <th>Задача</th>
+            <th>Исполнитель</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="task-name">Получить обновлённую оценку от Вити</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Обновить блок в презентации для Виктора</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Зафиксировать форматы поддержки</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Начать работу по обновлению юридической модели</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Запланировать встречу с Виктором</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Внести правки в презентацию для Сколково</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Дать Маше доступ к курсу</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Отправить Маше записи кастдевов</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Провести повторный Zoom с Машей</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Передать дополнительные материалы для видео Вике и Диме</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Начать обсуждение по фильму про платформу</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Получить от Маши расписание по Овчинкину</td>
+            <td class="executor"><span class="exec-chip">Маша</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Связаться со студентами для формирования команды</td>
+            <td class="executor"><span class="exec-chip">Ксения</span></td>
+          </tr>
+          <tr>
+            <td class="task-name">Внести правки в видео</td>
+            <td class="executor"><span class="exec-chip">Вика, Дима</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section>
+    <div class="section-title">История по неделям</div>
+    <div class="history-stack">
+
+      <!-- W26 -->
+      <div class="hist-item open" id="hist-w26">
+        <div class="hist-header" onclick="toggleHist('hist-w26')">
+          <span class="hist-week">W26</span>
+          <span class="hist-dates-label">22–28 июня</span>
+          <span class="hist-dates-sub">· текущая</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Сделали презентацию для Сколково</li>
+                <li>Обновили прototипы веб и мобильной версии</li>
+                <li>Отправили прototипы Вике и Диме для добавления в видео</li>
+                <li>Провели Zoom с Машей</li>
+                <li>Отправили Маше таблицу и материалы по платформе</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Получить обновлённую оценку от Вити</li>
+                <li>Обновить блок в презентации для Виктора</li>
+                <li>Зафиксировать форматы поддержки</li>
+                <li>Начать работу по обновлению юридической модели</li>
+                <li>Запланировать встречу с Виктором</li>
+                <li>Внести правки в презентацию для Сколково</li>
+                <li>Дать Маше доступ к курсу и отправить записи кастдевов</li>
+                <li>Передать доп. материалы для видео Вике и Диме</li>
+                <li>Начать обсуждение по фильму про платформу</li>
+                <li>Связаться со студентами для формирования команды</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- W25 -->
+      <div class="hist-item" id="hist-w25">
+        <div class="hist-header" onclick="toggleHist('hist-w25')">
+          <span class="hist-week">W25</span>
+          <span class="hist-dates-label">15–21 июня</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Сделали сайт (лендинг)</li>
+                <li>Получили оценку от Вити</li>
+                <li>Провели встречу с Виктором</li>
+                <li>Подписали договор с Союзом и получили оплату на административную поддержку</li>
+                <li>Провели зум с Викой и Димой по фильму о платформе</li>
+                <li>Прописали задачи, связанные с платформой; актуализировали запрос к Вите по дополнению портрета</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Получить письменный ок от МФТИ</li>
+                <li>Стартовать дальше по плану</li>
+                <li>Актуализировать запрос к Лёше</li>
+                <li>Синхронизироваться с Викой и Димой по концепции фильма</li>
+                <li>Получить ОС от Вити по вакансии техпроджекта</li>
+                <li>Запустить поиск</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- W24 -->
+      <div class="hist-item" id="hist-w24">
+        <div class="hist-header" onclick="toggleHist('hist-w24')">
+          <span class="hist-week">W24</span>
+          <span class="hist-dates-label">8–14 июня</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Сделали сайт (лендинг)</li>
+                <li>Получили оценку от Вити</li>
+                <li>Провели встречу с Виктором</li>
+                <li>Подписали договор с Союзом и получили оплату на административную поддержку</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Получить письменный ок от МФТИ</li>
+                <li>Стартовать дальше по плану</li>
+                <li>Актуализировать запрос к Алексею</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- W23 -->
+      <div class="hist-item" id="hist-w23">
+        <div class="hist-header" onclick="toggleHist('hist-w23')">
+          <span class="hist-week">W23</span>
+          <span class="hist-dates-label">1–7 июня</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Сделали питч-презентацию для Виктора Кузнецова</li>
+                <li>Передали контекст Вите для разработки ТЗ</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Провести встречу с Виктором</li>
+                <li>Получить письменный ок от МФТИ</li>
+                <li>Стартовать дальше по плану</li>
+                <li>Получить детальное ТЗ и оценку от Вити</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- W22 -->
+      <div class="hist-item" id="hist-w22">
+        <div class="hist-header" onclick="toggleHist('hist-w22')">
+          <span class="hist-week">W22</span>
+          <span class="hist-dates-label">25–31 мая</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Обновили юрмодель и письмо ректору</li>
+                <li>Провели зум с Лёшей</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Получить письмо о сотрудничестве от ректора МФТИ</li>
+                <li>Запланировать зум с Виктором</li>
+                <li>Определить ближайшие шаги</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- W21 -->
+      <div class="hist-item" id="hist-w21">
+        <div class="hist-header" onclick="toggleHist('hist-w21')">
+          <span class="hist-week">W21</span>
+          <span class="hist-dates-label">18–24 мая</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Получили оценку от юристов ВИ</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Получить ОС от Вики по ревью юристов ВИ (вторник)</li>
+                <li>Запланировать зум с Лёшей</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- W20 -->
+      <div class="hist-item" id="hist-w20">
+        <div class="hist-header" onclick="toggleHist('hist-w20')">
+          <span class="hist-week">W20</span>
+          <span class="hist-dates-label">11–17 мая</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Отправили документ на ревью юристам ВИ</li>
+                <li>Получили ОС по стоимости разработки от Вити</li>
+                <li>Упаковали в презу для Сколково, отправили перед выходными</li>
+                <li>Решили добавить антикоррупционный блок</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Получить доработанную версию юрмодели от Вики</li>
+                <li>Получить оценку от юристов ВИ</li>
+                <li>Запланировать зум с юристами при необходимости</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- W19 -->
+      <div class="hist-item" id="hist-w19">
+        <div class="hist-header" onclick="toggleHist('hist-w19')">
+          <span class="hist-week">W19</span>
+          <span class="hist-dates-label">4–10 мая</span>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body">
+          <div class="hist-cols">
+            <div>
+              <div class="hist-col-title fact">Факт</div>
+              <ul class="hist-list fact">
+                <li>Доработаны ответы для юриста</li>
+                <li>Получена и отредактирована юрмодель</li>
+                <li>Отправлены уточняющие вопросы юристу</li>
+              </ul>
+            </div>
+            <div>
+              <div class="hist-col-title plan">План</div>
+              <ul class="hist-list plan">
+                <li>Получить ОС по стоимости разработки от Вити</li>
+                <li>До 08.05 — первичный вид для Сколково: упаковать в презу</li>
+                <li>Получить доработанную версию юрмодели</li>
+                <li>Запланировать зум с юристами</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<script>
+function toggleHist(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
