@@ -732,14 +732,36 @@ const SEED_DATA = {
           emoji: "🎬",
           projects: [
             {
-              id: "medialab",
-              title: "Oreshkin Media Lab",
+              id: "posts",
+              title: "Посты в ТГ",
               tasks: [
-                { id: "t_m1", title: "Задача (нажми ред. режим чтобы заполнить)", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
-                { id: "t_m2", title: "Задача",                                    assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
-                { id: "t_m3", title: "Задача",                                    assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_m1", title: "2 поста в ТГ за неделю", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
               ]
-            }
+            },
+            {
+              id: "forum",
+              title: "Международный форум для детских садов",
+              tasks: [
+                { id: "t_m2", title: "Повторно узнать статус", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_m3", title: "Запланировать Zoom с Мариной", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            },
+            {
+              id: "taezhnik",
+              title: "Таёжник",
+              tasks: [
+                { id: "t_m4", title: "Запланировать Zoom по поездке и по отделу продаж", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_m5", title: "Вернуться с расчётом по предварительной подготовке", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            },
+            {
+              id: "personalbrand",
+              title: "Личный бренд + Упаковка медиа-продакшна",
+              tasks: [
+                { id: "t_m6", title: "Провести Zoom во вторник", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_m7", title: "Определить план дальнейших действий", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+              ]
+            },
           ]
         },
         {
@@ -748,26 +770,17 @@ const SEED_DATA = {
           emoji: "🎓",
           projects: [
             {
-              id: "courses",
-              title: "Курс / Менторство",
+              id: "mentoring",
+              title: "Наставничество",
               tasks: [
-                { id: "t_men1", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
-                { id: "t_men2", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_men1", title: "Вернуться за обратной связью", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
               ]
-            }
-          ]
-        },
-        {
-          id: "assist",
-          label: "АССИСТ+",
-          emoji: "👥",
-          projects: [
+            },
             {
-              id: "hr",
-              title: "HR-партнёрство",
+              id: "branding",
+              title: "Брендинг, лендинг, нейминг",
               tasks: [
-                { id: "t_hr1", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
-                { id: "t_hr2", title: "Задача", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_men2", title: "Завершить работу", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
               ]
             }
           ]
@@ -791,13 +804,20 @@ const SEED_DATA = {
         {
           id: "backlog",
           label: "Бэклог",
-          emoji: "📋",
+          emoji: "📦",
           projects: [
             {
               id: "ideas",
-              title: "Идеи и задачи",
+              title: "Заморожено / Вернуться позже",
               tasks: [
-                { id: "t_b1", title: "Никита Соин – рассмотреть как потенциального партнёра", assignee: "Ксения", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_b1",  title: "Никита Соин – звонок начало июля: команда или консультация по финансам", assignee: "Ксения", deadline: "2026-07-05", status: "todo", rolledOverFrom: null },
+                { id: "t_b2",  title: "Лига плюща (Физтех-Союз) – вернуться в конце лета",              assignee: "", deadline: "2026-08-01", status: "todo", rolledOverFrom: null },
+                { id: "t_b3",  title: "Evraz – вернуться в начале июля",                                  assignee: "", deadline: "2026-07-07", status: "todo", rolledOverFrom: null },
+                { id: "t_b4",  title: "Hantico – напомнить о себе в июле",                               assignee: "", deadline: "2026-07-15", status: "todo", rolledOverFrom: null },
+                { id: "t_b5",  title: "Захарова × МФТИ × Synapt – вернуться в августе",                 assignee: "", deadline: "2026-08-01", status: "todo", rolledOverFrom: null },
+                { id: "t_b6",  title: "Международный МФТИ (Межфизтех) – думать над позиционированием",  assignee: "", deadline: "2026-07-28", status: "todo", rolledOverFrom: null },
+                { id: "t_b7",  title: "Новое заявление оператора персданных – обновить после публикации лендинга", assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
+                { id: "t_b8",  title: "Школково – запланировать пост с рекламой",                       assignee: "", deadline: "2026-06-28", status: "todo", rolledOverFrom: null },
               ]
             }
           ]
